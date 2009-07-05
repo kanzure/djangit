@@ -35,9 +35,13 @@ def upload(request, path=""):
 def new(request,path=""):
     returnstring = "new (path=%s)" % (path)
     return HttpResponse(returnstring)
+
 def viewcommit_for_file(request,path="",sha=""):
-    returnstring = "viewcommit_for_file (path=%s,sha=%s)" % (path,sha)
-    return HttpResponse(returnstring)
+    try:
+        return direct_to_template(request, template="viewcommit_for_file.html")
+    except TemplateDoesNotExist:
+        raise Http404()
+
 def changelog(request,path=""):
     returnstring = "changelog (path=%s)" % (path)
     return HttpResponse(returnstring)
