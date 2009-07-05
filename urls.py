@@ -16,6 +16,8 @@ urlpatterns = patterns('',
     #browse to /polls/23/ 
     # (r'^polls/(?P<poll_id>\d+)/$', 'mysite.polls.views.detail')
     # detail(request=<HttpRequest object>, poll_id=23)
+    #for more information, see:
+    #http://docs.djangoproject.com/en/dev/topics/http/urls/
 
     # Uncomment the next line to enable the admin:
     (r'^admin/(.*)', admin.site.root),
