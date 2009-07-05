@@ -24,15 +24,16 @@ urlpatterns = patterns('',
     (r'^admin/(.*)', admin.site.root),
     #login/signup stuff not included here
     #also user profile stuff not included here
-    (r'^edit/', 'pydjangitwiki.wiki.views.edit'),
+    (r'^edit/$', 'pydjangitwiki.wiki.views.edit'),
     (r'^root$', 'pydjangitwiki.wiki.views.index'),
-    (r'^/$', 'pydjangitwiki.wiki.views.index'),
+    #what was this one for?
+    #(r'^/$', 'pydjangitwiki.wiki.views.index'),
     #(r'^/([^/?&#.]+)\.css$', # /:style.css
     (r'^commit/([A-Fa-f0-9]{5,40})$', 'pydjangitwiki.wiki.views.indexviewcommit'), # commit/:sha
     (r'^/?([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)?/archive$', 'pydjangitwiki.wiki.views.archive'), # /?:path?/archive #make zip file
     (r'^/?([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)?/history$', 'pydjangitwiki.wiki.views.history'), # /?:path?/history
     (r'^/?([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)?/diff$', 'pydjangitwiki.wiki.views.diff'), # /?:path?/diff
-    (r'^/([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)/edit$', 'pydjangitwiki.wiki.views.edit'), # /:path/edit
+    (r'^([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)/edit$', 'pydjangitwiki.wiki.views.edit'), # /:path/edit
     (r'^/([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)/upload$', 'pydjangitwiki.wiki.views.upload'), # /:path/upload
     (r'^new$', 'pydjangitwiki.wiki.views.new'), # /new
     (r'^upload$', 'pydjangitwiki.wiki.views.upload'), # /upload
