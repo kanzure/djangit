@@ -5,6 +5,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 SITE_NAME = "site name in settings.py"
+REPO_DIR = "/home/kanzure/sandbox/testrepo/"
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
