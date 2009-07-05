@@ -5,6 +5,7 @@ from django.views.generic.simple import direct_to_template
 from django.shortcuts import render_to_response
 from wiki.models import *
 from git import *
+import os.path
 
 #def about_pages(request, page):
 #    try:
@@ -44,3 +45,11 @@ def changelog(request,path=""):
 
 def view(request,path=""):
     return render_to_response("view.html", locals())
+
+def render(request, file="", filename=""):
+    if not filename and not (file == ""):
+        return render_to_response(file,locals())
+    elif not filename == "":
+        fp = open(os.path.join(os.path.realpath(os.path.curdir),("templates/pydjangitwiki-static/static/images/%s.png" % (filename))))
+        blah = fp.read()
+        return HttpResponse(blah,mimetype="image/png")

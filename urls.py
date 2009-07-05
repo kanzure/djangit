@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
-
+from django.shortcuts import render_to_response
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 import pydjangitwiki.wiki
@@ -24,6 +24,17 @@ urlpatterns = patterns('',
     (r'^admin/(.*)', admin.site.root),
     #login/signup stuff not included here
     #also user profile stuff not included here
+    #do CSS/JS first
+    (r'^pydjangitwiki-static/static/images/(?P<filename>[A-Za-z]*)\.png$', 'pydjangitwiki.wiki.views.render', {'file':""}),
+    (r'^pydjangitwiki-static/screen.css$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/screen.css"}),
+    (r'^pydjangitwiki-static/print.css$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/print.css"}),
+    (r'^pydjangitwiki-static/reset.css$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/reset.css"}),
+    (r'^pydjangitwiki-static/static/highlight.css$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/static/highlight.css"}),
+    (r'^pydjangitwiki-static/static/script/jquery/jquery-1.3.1.js$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/static/script/jquery/jquery-1.3.1.js"}),
+    (r'^pydjangitwiki-static/static/script/jquery/ui.core.js$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/static/script/jquery/ui.core.js"}),
+    (r'^pydjangitwiki-static/static/script/jquery/ui.tabs.js$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/static/script/jquery/ui.tabs.js"}),
+    (r'^pydjangitwiki-static/static/script/jquery/tablesorter.js$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/static/script/jquery/tablesorter.js"}),
+    (r'^pydjangitwiki-static/static/script/app.js$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/static/script/app.js"}),
     (r'^edit/$', 'pydjangitwiki.wiki.views.edit'),
     (r'^root$', 'pydjangitwiki.wiki.views.index'),
     (r'^$', 'pydjangitwiki.wiki.views.index'),
