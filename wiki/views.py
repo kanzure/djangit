@@ -48,7 +48,10 @@ def view(request,path=""):
 
 def render(request, file="", filename=""):
     if not filename and not (file == ""):
-        return render_to_response(file,locals())
+        if (file.rfind("css") > 0):
+            return render_to_response(file,locals(),mimetype="text/css")
+        elif (file.rfind("js") > 0):
+            return render_to_response(file,locals(),mimetype="text/js")
     elif not filename == "":
         fp = open(os.path.join(os.path.realpath(os.path.curdir),("templates/pydjangitwiki-static/static/images/%s.png" % (filename))))
         blah = fp.read()
