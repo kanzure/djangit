@@ -13,36 +13,28 @@ from git import *
 #        raise Http404()
 
 def index(request):
-    returnstring = "this is the index"
-    return HttpResponse(returnstring)
+    return render_to_response("index.html", locals())
 
 def edit(request, path=""):
-    returnstring = "edit (path=%s)" % (path)
-    return HttpResponse(returnstring)
+    return render_to_response("edit.html", locals())
 
 def indexviewcommit(request,sha=""):
-    returnstring = "indexviewcommit (sha=%s)" % (sha)
-    return HttpResponse(returnstring)
+    return render_to_response("indexviewcommit.html", locals())
 
 def archive(request,path=""):
-    returnstring = "archive (path=%s)" % (path)
-    return HttpResponse(returnstring)
+    return render_to_response("archive.html", locals())
 
 def history(request,path=""):
-    returnstring = "history (path=%s)" % (path)
-    return HttpResponse(returnstring)
+    return render_to_response("history.html", locals())
 
 def diff(request, path=""):
-    returnstring = "diff (path=%s)" % (path)
-    return HttpResponse(returnstring)
+    return render_to_response("diff.html", locals())
 
 def upload(request, path=""):
-    returnstring = "upload (path=%s)" % (path)
-    return HttpResponse(returnstring)
+    return render_to_response("upload.html", locals())
 
 def new(request,path=""):
-    returnstring = "new (path=%s)" % (path)
-    return HttpResponse(returnstring)
+    return render_to_response("new.html", locals())
 
 def viewcommit_for_file(request,path="",sha=""):
     return render_to_response("viewcommit_for_file.html", locals())
