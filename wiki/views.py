@@ -6,6 +6,7 @@ from django.shortcuts import render_to_response
 from wiki.models import *
 from git import *
 import os.path
+from django.conf import settings
 
 #def about_pages(request, page):
 #    try:
