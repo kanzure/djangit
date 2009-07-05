@@ -1,9 +1,7 @@
-<html>
-<body>
-path = {{ path }}
-<br />
+{% extends "base.html" %}
+
+{% block content %}
 sha = {{ sha }}
 <br />
-end of content
-</body>
-</html>
+path = {{ path }}
+{% endblock %}
