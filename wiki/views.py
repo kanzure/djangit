@@ -15,6 +15,10 @@ from django.conf import settings
 #        raise Http404()
 
 def index(request):
+    repo = Repo(REPO_DIR)
+    commits = repo.commits('master', max_count=100)
+    head = commits[0]
+    files = head.tree.items()
     return render_to_response("index.html", locals())
 
 def edit(request, path=""):
