@@ -15,7 +15,7 @@ from django.conf import settings
 #        raise Http404()
 
 def index(request):
-    repo = Repo(REPO_DIR)
+    repo = Repo(settings.REPO_DIR)
     commits = repo.commits('master', max_count=100)
     head = commits[0]
     files = head.tree.items()
