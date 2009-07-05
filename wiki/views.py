@@ -2,6 +2,7 @@
 from django.http import HttpResponse, Http404
 from django.template import TemplateDoesNotExist
 from django.views.generic.simple import direct_to_template
+from django.shortcuts import render_to_response
 from wiki.models import *
 from git import *
 
@@ -37,10 +38,7 @@ def new(request,path=""):
     return HttpResponse(returnstring)
 
 def viewcommit_for_file(request,path="",sha=""):
-    try:
-        return direct_to_template(request, template="viewcommit_for_file.html")
-    except TemplateDoesNotExist:
-        raise Http404()
+    return render_to_response("viewcommit_for_file.html", locals())
 
 def changelog(request,path=""):
     returnstring = "changelog (path=%s)" % (path)
