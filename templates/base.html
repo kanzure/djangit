@@ -11,6 +11,43 @@
 </head>
 
 <body>
+    <div id="header">
+        <h1>
+            {% block title2 %}
+            {{ SITE_NAME }}
+            {% endblock title2 %}
+        </h1>
+        <div id="info">
+            User
+            <a href="/profile">your hostname or username here</a>
+            <a href="/login">Login</a>
+        </div>
+        {% block searchbox %}
+            <div id="search">
+                <form action="/search" method="get">
+                    <div>
+                        <label class="hidden" for="pattern">Search</label>
+                        <input class="clear" id="pattern" name="pattern" type="text" value="Search" />
+                    </div>
+                </form>
+            </div>
+        {% endblock searchbox %}
+    </div>
+    <div id="menu">
+        <ul>
+            <li><a accesskey="z" class="home" href="/Home">Home</a></li>
+            <li class="breadcrumb first"><a href="/root">&#8730;&#175; Root</a></li>
+            <li class="breadcrumb">/</li>
+            <li class="breadcrumb last"><a href="/skdb.py">skdb.py</a></li>
+        </ul>
+        <ul class="wiki">
+            <li class="title">Wiki Menu</li>
+            <li><a accesskey="c" class="view" href="/skdb.py">View</a></li>
+            <li><a class="new" href="/new page/new">New Page</a></li>
+            <li><a class="source" href="/skdb.py?output=source">Source</a></li>
+            <li><a accesskey="e" class="edit" href="/skdb.py/edit">Edit</a></li>
+        </ul>
+    </div>
     <div id="sidebar">
         {% block sidebar %}
         <ul>
@@ -22,7 +59,13 @@
     </div>
 
     <div id="content">
-        {% block content %}{% endblock %}
+        {% block content %}
+        {% endblock content %}
+    </div>
+    
+    <div id="footer">
+        powered by
+        <a href="http://github.com/kanzure/pydjangitwiki/tree/master">pydjangitwiki</a>
     </div>
 </body>
 </html>
