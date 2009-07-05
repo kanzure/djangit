@@ -26,8 +26,7 @@ urlpatterns = patterns('',
     #also user profile stuff not included here
     (r'^edit/$', 'pydjangitwiki.wiki.views.edit'),
     (r'^root$', 'pydjangitwiki.wiki.views.index'),
-    #what was this one for?
-    #(r'^/$', 'pydjangitwiki.wiki.views.index'),
+    (r'^$', 'pydjangitwiki.wiki.views.index'),
     #(r'^/([^/?&#.]+)\.css$', # /:style.css
     (r'^commit/([A-Fa-f0-9]{5,40})$', 'pydjangitwiki.wiki.views.indexviewcommit'), # commit/:sha
     (r'^/?([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)?/archive$', 'pydjangitwiki.wiki.views.archive'), # /?:path?/archive #make zip file
@@ -42,7 +41,7 @@ urlpatterns = patterns('',
     (r'^([A-Fa-f0-9]{5,40})$', 'pydjangitwiki.wiki.views.indexviewcommit'), # /:sha
     (r'^([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)/([A-Fa-f0-9]{5,40})$', 'pydjangitwiki.wiki.views.viewcommit_for_file'), # /:path/:sha
     (r'^changelog\.rss$', 'pydjangitwiki.wiki.views.changelog'), # /changelog.rss
-    (r'^([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)/changelog\.rss$', 'pydjangitwiki.wiki.views.changelog_for_file'), # /:path/changelog.rss
+    (r'^([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)/changelog\.rss$', 'pydjangitwiki.wiki.views.changelog'), # /:path/changelog.rss
     #the catch-all
     (r'^([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)$', 'pydjangitwiki.wiki.views.view'), # /:path
 )
