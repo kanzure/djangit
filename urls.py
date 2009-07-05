@@ -12,6 +12,11 @@ urlpatterns = patterns('',
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
+    #some extra notes
+    #browse to /polls/23/ 
+    # (r'^polls/(?P<poll_id>\d+)/$', 'mysite.polls.views.detail')
+    # detail(request=<HttpRequest object>, poll_id=23)
+
     # Uncomment the next line to enable the admin:
     (r'^admin/(.*)', admin.site.root),
     #login/signup stuff not included here
