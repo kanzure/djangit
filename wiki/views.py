@@ -40,7 +40,7 @@ def viewcommit_for_file(request,path="",sha=""):
     return render_to_response("viewcommit_for_file.html", locals())
 
 def changelog(request,path=""):
-    return render_to_response("changelog.html", locals())
+    return render_to_response("changelog.rss", locals())
 
 def view(request,path=""):
     return render_to_response("view.html", locals())
