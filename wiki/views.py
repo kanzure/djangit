@@ -46,8 +46,10 @@ def edit(request, path="", sha=""):
     '''
     if request.method == 'GET':
         #display form
+        pass
     elif request.method == 'POST':
         #submit modifications
+        pass
     return render_to_response("edit.html", locals())
 
 def archive(request,path="",sha=""):
@@ -89,8 +91,10 @@ def upload(request, path=""):
     '''
     if request.method == 'GET':
         #display the form
+        pass
     elif request.method == 'POST':
         #upload file
+        pass
     return render_to_response("upload.html", locals())
 
 def new(request,path="",sha=""):
@@ -101,8 +105,10 @@ def new(request,path="",sha=""):
     '''
     if request.method == 'GET':
         #show the form
+        pass
     elif request.method == 'POST':
         #add content to repo
+        pass
     return render_to_response("new.html", locals())
 
 def changelog(request,path="",sha=""):
