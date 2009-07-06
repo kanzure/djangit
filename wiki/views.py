@@ -82,6 +82,7 @@ def diff(request, path="", sha1="", sha2=""):
     '''
     if not request.GET['show'] == True:
         #pick files to diff
+        #this is just like calling history(). so is probably redundant.
         pass
     elif request.GET['show']:
         #diff view
