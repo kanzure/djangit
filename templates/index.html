@@ -17,25 +17,13 @@
 <tbody>
 
 
-{% for file in data_in_index %}
-author: {{ file.author }}
-<br />
-author email: {{ file.author_email }}
-<br />
-id: {{ file.id }}
-<br />
-message: {{ file.message }}
-<br />
-date: {{ file.date }}
-<br />
-filename: {{ file.filename }}
-<br />
+{% for file in data_for_index %}
 
 <tr>
-<td class="link"><a style="padding-left: 0px" href="/icons" title="Open"><img src="/static/images/tree_closed.png" alt=""/><img src="/static/images/tree.png" alt="Tree"/> icons</a></td>
-<td><span class="date seconds_1246568822">02 Jul 2009 16:07</span></td>
-<td>kanzure</td>
-<td>some comment goes here</td>
+<td class="link"><a style="padding-left: 0px" href="/{{ file.filename }}/{{ file.id }}" title="Open">{{ file.filename }}</a></td>
+<td><span class="date seconds_1246568822">{{ file.date }}</span></td>
+<td>{{ file.author }}</td>
+<td>{{ file.message }}</td>
 
 <td>
 <a href="/icons/archive" title="Archive"><img src="/static/images/archive.png" alt="Archive"/></a>
