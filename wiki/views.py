@@ -16,9 +16,19 @@ from django.conf import settings
 
 def index(request):
     repo = Repo(settings.REPO_DIR)
-    commits = repo.commits('master', max_count=100)
+    commits = repo.commits('master', max_count=1)
     head = commits[0]
     files = head.tree.items()
+    data_for_index = [] #start with nothing
+    for each file in files:
+        toinsert = {}
+        myblob = file[1]
+        thecommit = myblob.blame(repo,head,myblob.basename)[0][0]
+        toinsert['author'] = thecommit.committer.name
+        toinsert['author_email'] = thecommit.committer.email
+        toinsert['id'] = thecommit.id
+        toinsert['date'] = thecommit.authored_date
+        toinsert['message'] = thecommit.message
     return render_to_response("index.html", locals())
 
 def edit(request, path=""):
