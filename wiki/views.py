@@ -51,13 +51,15 @@ def upload(request, path=""):
 def new(request,path=""):
     return render_to_response("new.html", locals())
 
-def viewcommit_for_file(request,path="",sha=""):
-    return render_to_response("viewcommit_for_file.html", locals())
-
 def changelog(request,path=""):
     return render_to_response("changelog.rss", locals())
 
-def view(request,path=""):
+def view(request,path="",sha=""):
+    repo = Repo(settings.REPO_DIR)
+    commits = repo.commits(start=sha or 'master',max_count=1)
+    head = commits[0]
+    files = head.tree.items()
+    #more stuff to be done here
     return render_to_response("view.html", locals())
 
 def render(request, file="", filename=""):
