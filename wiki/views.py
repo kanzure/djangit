@@ -4,7 +4,7 @@ from django.template import TemplateDoesNotExist
 from django.views.generic.simple import direct_to_template
 from django.shortcuts import render_to_response
 from wiki.models import *
-from git import *
+import git
 import os.path
 from django.conf import settings
 
@@ -17,7 +17,7 @@ from django.conf import settings
 # TODO: download a single page
 
 def index(request,sha=""):
-    repo = Repo(settings.REPO_DIR)
+    repo = git.Repo(settings.REPO_DIR)
     commits = repo.commits(start=sha or 'master', max_count=1)
     head = commits[0]
     files = head.tree.items()
@@ -92,7 +92,7 @@ def view(request,path="",sha=""):
     '''
     view the path/file/page at a given commit
     '''
-    repo = Repo(settings.REPO_DIR)
+    repo = git.Repo(settings.REPO_DIR)
     commits = repo.commits(start=sha or 'master',max_count=1)
     head = commits[0]
     files = head.tree.items()
