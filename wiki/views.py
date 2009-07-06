@@ -74,6 +74,8 @@ def history(request,path="",sha=""):
 
     "sha" determines the latest version to show (not necessary but useful for paging, etc.)
     '''
+    #display: id, committer.author, committer.author_email, date, message
+    #see: http://adl.serveftp.org:4567/history
     return render_to_response("history.html", locals())
 
 def diff(request, path="", sha1="", sha2=""):
