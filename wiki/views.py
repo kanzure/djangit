@@ -59,7 +59,15 @@ def view(request,path="",sha=""):
     commits = repo.commits(start=sha or 'master',max_count=1)
     head = commits[0]
     files = head.tree.items()
-    #more stuff to be done here
+    returncontents = ""
+    for each in files:
+        myblob = each[1]
+        filename = myblob.name
+        contents = myblob.data
+        if filename == path:
+            #we have a match
+            returncontents = contents
+            break
     return render_to_response("view.html", locals())
 
 def render(request, file="", filename=""):
