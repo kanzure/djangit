@@ -44,12 +44,20 @@ def edit(request, path="", sha=""):
     '''
     return render_to_response("edit.html", locals())
 
-def archive(request,path=""):
+def archive(request,path="",sha=""):
     '''
     download a zip archive of the current path
     
-    (the archive must have the full path so that it is not a tarbomb)
+    (the archive must have the full path (inside of it) so that it is not a tarbomb)
     '''
+    repo = git.Repo(settings.REPO_DIR)
+    mycommit = repo.commit(id=sha or 'master') #er, test this
+    mytree = mycommit.tree()
+    myitems = mytree.items()
+    #now what about the path?
+    #cases:
+    #1) it's a file
+    #2) it's a folder
     return render_to_response("archive.html", locals())
 
 def history(request,path="",sha=""):
