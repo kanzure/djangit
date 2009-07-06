@@ -29,6 +29,7 @@ def index(request):
         toinsert['id'] = thecommit.id
         toinsert['date'] = thecommit.authored_date
         toinsert['message'] = thecommit.message
+        data_for_index.append(toinsert)
     return render_to_response("index.html", locals())
 
 def edit(request, path=""):
