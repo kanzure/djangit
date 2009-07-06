@@ -20,9 +20,9 @@ def index(request):
     head = commits[0]
     files = head.tree.items()
     data_for_index = [] #start with nothing
-    for each file in files:
+    for each in files:
         toinsert = {}
-        myblob = file[1]
+        myblob = each[1]
         thecommit = myblob.blame(repo,head,myblob.basename)[0][0]
         toinsert['author'] = thecommit.committer.name
         toinsert['author_email'] = thecommit.committer.email
