@@ -82,8 +82,10 @@ def diff(request, path="", sha1="", sha2=""):
     '''
     if not request.GET['show'] == True:
         #pick files to diff
+        pass
     elif request.GET['show']:
         #diff view
+        pass
     return render_to_response("diff.html", locals())
 
 def upload(request, path=""):
