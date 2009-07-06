@@ -14,7 +14,9 @@ from django.conf import settings
 #    except TemplateDoesNotExist:
 #        raise Http404()
 
-# TODO: download a single page
+# TODO: download a single page (not in a compressed archive)
+# TODO: figure out how to do multiple pages (i.e., with POST or SUBMIT
+# django request objects: http://docs.djangoproject.com/en/dev/ref/request-response/)
 
 def index(request,sha=""):
     repo = git.Repo(settings.REPO_DIR)
