@@ -14,9 +14,9 @@ from django.conf import settings
 #    except TemplateDoesNotExist:
 #        raise Http404()
 
-def index(request):
+def index(request,sha=""):
     repo = Repo(settings.REPO_DIR)
-    commits = repo.commits('master', max_count=1)
+    commits = repo.commits(start=sha or 'master', max_count=1)
     head = commits[0]
     files = head.tree.items()
     data_for_index = [] #start with nothing
@@ -29,14 +29,12 @@ def index(request):
         toinsert['id'] = thecommit.id
         toinsert['date'] = thecommit.authored_date
         toinsert['message'] = thecommit.message
+        toinsert['filename'] = myblob.basename
         data_for_index.append(toinsert)
     return render_to_response("index.html", locals())
 
 def edit(request, path=""):
     return render_to_response("edit.html", locals())
-
-def indexviewcommit(request,sha=""):
-    return render_to_response("indexviewcommit.html", locals())
 
 def archive(request,path=""):
     return render_to_response("archive.html", locals())

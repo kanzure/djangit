@@ -39,7 +39,7 @@ urlpatterns = patterns('',
     (r'^root$', 'pydjangitwiki.wiki.views.index'),
     (r'^$', 'pydjangitwiki.wiki.views.index'),
     #(r'^/([^/?&#.]+)\.css$', # /:style.css
-    (r'^commit/([A-Fa-f0-9]{5,40})$', 'pydjangitwiki.wiki.views.indexviewcommit'), # commit/:sha
+    (r'^commit/([A-Fa-f0-9]{5,40})$', 'pydjangitwiki.wiki.views.index'), # commit/:sha
     (r'^/?([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)?/archive$', 'pydjangitwiki.wiki.views.archive'), # /?:path?/archive #make zip file
     (r'^/?([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)?/history$', 'pydjangitwiki.wiki.views.history'), # /?:path?/history
     (r'^/?([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)?/diff$', 'pydjangitwiki.wiki.views.diff'), # /?:path?/diff
