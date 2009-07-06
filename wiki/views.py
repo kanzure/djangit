@@ -35,25 +35,32 @@ def index(request,sha=""):
         data_for_index.append(toinsert)
     return render_to_response("index.html", locals())
 
-def edit(request, path=""):
+def edit(request, path="", sha=""):
     '''
-    edit a page.
+    edit a page. if there are POST variables, these will be taken as the contents of the edit.
+
+    the "sha" named parameter is for which version of the file to edit
+    TODO: proper branching support
     '''
     return render_to_response("edit.html", locals())
 
 def archive(request,path=""):
     '''
     download a zip archive of the current path
+    
+    (the archive must have the full path so that it is not a tarbomb)
     '''
     return render_to_response("archive.html", locals())
 
-def history(request,path=""):
+def history(request,path="",sha=""):
     '''
     return the history for a given path (commits)
+
+    "sha" determines the latest version to show (not necessary but useful for paging, etc.)
     '''
     return render_to_response("history.html", locals())
 
-def diff(request, path=""):
+def diff(request, path="", sha1="", sha2=""):
     '''
     display the diff between two commits (SHA strings)
     '''
@@ -65,15 +72,19 @@ def upload(request, path=""):
     '''
     return render_to_response("upload.html", locals())
 
-def new(request,path=""):
+def new(request,path="",sha=""):
     '''
-    make a new file/page
+    make a new file/page at the given "path"
+
+    TODO: implement branching given the "sha" named parameter
     '''
     return render_to_response("new.html", locals())
 
-def changelog(request,path=""):
+def changelog(request,path="",sha=""):
     '''
     display the RSS changelog for this path
+
+    TODO: display the RSS changelog for all changes since sha="sha" (optional)
     '''
     return render_to_response("changelog.rss", locals())
 
@@ -101,6 +112,7 @@ def render(request, file="", filename=""):
     render - meant for displaying some of the static images for the template
     
     this is a terrible hack.
+    (see urls.py)
     '''
     if not filename and not (file == ""):
         if (file.rfind("css") > 0):
