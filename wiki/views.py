@@ -14,6 +14,8 @@ from django.conf import settings
 #    except TemplateDoesNotExist:
 #        raise Http404()
 
+# TODO: download a single page
+
 def index(request,sha=""):
     repo = Repo(settings.REPO_DIR)
     commits = repo.commits(start=sha or 'master', max_count=1)
