@@ -79,14 +79,9 @@ def history(request,path="",sha=""):
 def diff(request, path="", sha1="", sha2=""):
     '''
     display the diff between two commits (SHA strings)
+
+    to select them, use the history view.
     '''
-    if not request.GET['show'] == True:
-        #pick files to diff
-        #this is just like calling history(). so is probably redundant.
-        pass
-    elif request.GET['show']:
-        #diff view
-        pass
     return render_to_response("diff.html", locals())
 
 def upload(request, path=""):
