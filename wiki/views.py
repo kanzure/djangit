@@ -80,9 +80,10 @@ def diff(request, path="", sha1="", sha2=""):
     '''
     display the diff between two commits (SHA strings)
     '''
-    #two modes:
-    #1) pick files to diff
-    #2) diff view
+    if not request.GET['show'] == True:
+        #pick files to diff
+    elif request.GET['show']:
+        #diff view
     return render_to_response("diff.html", locals())
 
 def upload(request, path=""):
