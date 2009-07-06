@@ -18,17 +18,17 @@
 
 
 {% for file in data_in_index %}
-author: {{ file['author'] }}
+author: {{ file.author }}
 <br />
-author email: {{ file['author_email'] }}
+author email: {{ file.author_email }}
 <br />
-id: {{ file['id'] }}
+id: {{ file.id }}
 <br />
-message: {{ file['message'] }}
+message: {{ file.message }}
 <br />
-date: {{ file['date'] }}
+date: {{ file.date }}
 <br />
-filename: {{ file['filename'] }}
+filename: {{ file.filename }}
 <br />
 
 <tr>
