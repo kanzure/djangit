@@ -36,27 +36,51 @@ def index(request,sha=""):
     return render_to_response("index.html", locals())
 
 def edit(request, path=""):
+    '''
+    edit a page.
+    '''
     return render_to_response("edit.html", locals())
 
 def archive(request,path=""):
+    '''
+    download a zip archive of the current path
+    '''
     return render_to_response("archive.html", locals())
 
 def history(request,path=""):
+    '''
+    return the history for a given path (commits)
+    '''
     return render_to_response("history.html", locals())
 
 def diff(request, path=""):
+    '''
+    display the diff between two commits (SHA strings)
+    '''
     return render_to_response("diff.html", locals())
 
 def upload(request, path=""):
+    '''
+    upload a file
+    '''
     return render_to_response("upload.html", locals())
 
 def new(request,path=""):
+    '''
+    make a new file/page
+    '''
     return render_to_response("new.html", locals())
 
 def changelog(request,path=""):
+    '''
+    display the RSS changelog for this path
+    '''
     return render_to_response("changelog.rss", locals())
 
 def view(request,path="",sha=""):
+    '''
+    view the path/file/page at a given commit
+    '''
     repo = Repo(settings.REPO_DIR)
     commits = repo.commits(start=sha or 'master',max_count=1)
     head = commits[0]
@@ -73,6 +97,11 @@ def view(request,path="",sha=""):
     return render_to_response("view.html", locals())
 
 def render(request, file="", filename=""):
+    '''
+    render - meant for displaying some of the static images for the template
+    
+    this is a terrible hack.
+    '''
     if not filename and not (file == ""):
         if (file.rfind("css") > 0):
             return render_to_response(file,locals(),mimetype="text/css")
