@@ -49,7 +49,7 @@ urlpatterns = patterns('',
     (r'^upload$', 'pydjangitwiki.wiki.views.upload'), # /upload
     (r'^([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)/new$', 'pydjangitwiki.wiki.views.new'), # /:path/new
     (r'^([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)/upload$', 'pydjangitwiki.wiki.views.upload'), # /:path/upload
-    (r'^([A-Fa-f0-9]{5,40})$', 'pydjangitwiki.wiki.views.indexviewcommit'), # /:sha
+    (r'^([A-Fa-f0-9]{5,40})$', 'pydjangitwiki.wiki.views.index'), # /:sha
     (r'^([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)/([A-Fa-f0-9]{5,40})$', 'pydjangitwiki.wiki.views.viewcommit_for_file'), # /:path/:sha
     (r'^changelog\.rss$', 'pydjangitwiki.wiki.views.changelog'), # /changelog.rss
     (r'^([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)/changelog\.rss$', 'pydjangitwiki.wiki.views.changelog'), # /:path/changelog.rss
