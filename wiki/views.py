@@ -44,6 +44,10 @@ def edit(request, path="", sha=""):
     the "sha" named parameter is for which version of the file to edit
     TODO: proper branching support
     '''
+    if request.method == 'GET':
+        #display form
+    elif request.method == 'POST':
+        #submit modifications
     return render_to_response("edit.html", locals())
 
 def archive(request,path="",sha=""):
@@ -74,12 +78,19 @@ def diff(request, path="", sha1="", sha2=""):
     '''
     display the diff between two commits (SHA strings)
     '''
+    #two modes:
+    #1) pick files to diff
+    #2) diff view
     return render_to_response("diff.html", locals())
 
 def upload(request, path=""):
     '''
     upload a file
     '''
+    if request.method == 'GET':
+        #display the form
+    elif request.method == 'POST':
+        #upload file
     return render_to_response("upload.html", locals())
 
 def new(request,path="",sha=""):
@@ -88,6 +99,10 @@ def new(request,path="",sha=""):
 
     TODO: implement branching given the "sha" named parameter
     '''
+    if request.method == 'GET':
+        #show the form
+    elif request.method == 'POST':
+        #add content to repo
     return render_to_response("new.html", locals())
 
 def changelog(request,path="",sha=""):
