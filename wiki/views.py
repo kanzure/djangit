@@ -2,8 +2,8 @@
 from django.http import HttpResponse, Http404
 from django.template import TemplateDoesNotExist
 from django.views.generic.simple import direct_to_template
-from django.shortcuts import render_to_response
-from wiki.models import *
+import django.shortcuts #render_to_response
+import wiki.models
 import git
 import os.path
 from django.conf import settings
@@ -15,7 +15,6 @@ from django.conf import settings
 #        raise Http404()
 
 # TODO: download a single page (not in a compressed archive)
-# TODO: figure out how to do multiple pages (i.e., with POST or SUBMIT
 # django request objects: http://docs.djangoproject.com/en/dev/ref/request-response/)
 
 def index(request,sha=""):
@@ -35,7 +34,7 @@ def index(request,sha=""):
         toinsert['message'] = thecommit.message
         toinsert['filename'] = myblob.basename
         data_for_index.append(toinsert)
-    return render_to_response("index.html", locals())
+    return django.shortcuts.render_to_response("index.html", locals())
 
 def edit(request, path="", sha=""):
     '''
@@ -45,12 +44,12 @@ def edit(request, path="", sha=""):
     TODO: proper branching support
     '''
     if request.method == 'GET':
-        #display form
+        #display edit form
         pass
     elif request.method == 'POST':
-        #submit modifications
+        #commit modifications
         pass
-    return render_to_response("edit.html", locals())
+    return django.shortcuts.render_to_response("edit.html", locals())
 
 def archive(request,path="",sha=""):
     '''
@@ -66,17 +65,19 @@ def archive(request,path="",sha=""):
     #cases:
     #1) it's a file
     #2) it's a folder
-    return render_to_response("archive.html", locals())
+    return django.shortcuts.render_to_response("archive.html", locals())
 
 def history(request,path="",sha=""):
     '''
     return the history for a given path (commits)
 
     "sha" determines the latest version to show (not necessary but useful for paging, etc.)
+
+    should work for /history, some-dir/history, and some-file/history
     '''
     #display: id, committer.author, committer.author_email, date, message
     #see: http://adl.serveftp.org:4567/history
-    return render_to_response("history.html", locals())
+    return django.shortcuts.render_to_response("history.html", locals())
 
 def diff(request, path="", sha1="", sha2=""):
     '''
@@ -84,7 +85,7 @@ def diff(request, path="", sha1="", sha2=""):
 
     to select them, use the history view.
     '''
-    return render_to_response("diff.html", locals())
+    return django.shortcuts.render_to_response("diff.html", locals())
 
 def upload(request, path=""):
     '''
@@ -96,7 +97,7 @@ def upload(request, path=""):
     elif request.method == 'POST':
         #upload file
         pass
-    return render_to_response("upload.html", locals())
+    return django.shortcuts.render_to_response("upload.html", locals())
 
 def new(request,path="",sha=""):
     '''
@@ -110,7 +111,7 @@ def new(request,path="",sha=""):
     elif request.method == 'POST':
         #add content to repo
         pass
-    return render_to_response("new.html", locals())
+    return django.shortcuts.render_to_response("new.html", locals())
 
 def changelog(request,path="",sha=""):
     '''
@@ -118,7 +119,7 @@ def changelog(request,path="",sha=""):
 
     TODO: display the RSS changelog for all changes since sha="sha" (optional)
     '''
-    return render_to_response("changelog.rss", locals())
+    return django.shortcuts.render_to_response("changelog.rss", locals())
 
 def view(request,path="",sha=""):
     '''
@@ -137,7 +138,7 @@ def view(request,path="",sha=""):
             #we have a match
             returncontents = contents
             break
-    return render_to_response("view.html", locals())
+    return django.shortcuts.render_to_response("view.html", locals())
 
 def render(request, file="", filename=""):
     '''
@@ -148,9 +149,9 @@ def render(request, file="", filename=""):
     '''
     if not filename and not (file == ""):
         if (file.rfind("css") > 0):
-            return render_to_response(file,locals(),mimetype="text/css")
+            return django.shortcuts.render_to_response(file,locals(),mimetype="text/css")
         elif (file.rfind("js") > 0):
-            return render_to_response(file,locals(),mimetype="text/js")
+            return django.shortcuts.render_to_response(file,locals(),mimetype="text/js")
     elif not filename == "":
         fp = open(os.path.join(os.path.realpath(os.path.curdir),("templates/pydjangitwiki-static/static/images/%s.png" % (filename))))
         blah = fp.read()
