@@ -21,11 +21,22 @@ def index(request,sha=""):
     repo = git.Repo(settings.REPO_DIR)
     commits = repo.commits(start=sha or 'master', max_count=1)
     head = commits[0]
+    #if sha == "" or not sha: head = commits[0]
+    #else: #index view into the past
+    #    print "for great justice!\n\n\n"
+    #    for commit in commits:
+    #        if commit.id == sha:
+    #            head = commit
+    #            print "the commit object is ", commit
+    #print "sha is ", head.id, " and sha was: ", sha
+    #head = commits[0]
     files = head.tree.items()
     data_for_index = [] #start with nothing
     for each in files:
         toinsert = {}
         myblob = each[1]
+        print "myblob is of type: ", type(myblob)
+        #FIXME: what happens when it's a git.tree.Tree object? (a directory in the repo)
         thecommit = myblob.blame(repo,head,myblob.basename)[0][0]
         toinsert['author'] = thecommit.committer.name
         toinsert['author_email'] = thecommit.committer.email
