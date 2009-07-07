@@ -56,6 +56,8 @@ def archive(request,path="",sha=""):
     download a zip archive of the current path
     
     (the archive must have the full path (inside of it) so that it is not a tarbomb)
+
+    #git archive --format=zip --prefix=SITE_NAME/ HEAD:THE_DIRECTORY_HERE/ > archive.zip
     '''
     repo = git.Repo(settings.REPO_DIR)
     mycommit = repo.commit(id=sha or 'master') #er, test this
