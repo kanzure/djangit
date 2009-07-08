@@ -131,7 +131,7 @@ def index(request,path="",sha=""):
     pathfilecheck = pathIsFile(path=path,sha=sha)
     if pathcheck and pathfilecheck:
         return view(request,path=path,sha=sha)
-    if not pathcheck:
+    if not pathcheck and path:
         return new(request,path=path)
     repo = git.Repo(settings.REPO_DIR)
     commits = repo.commits(start=sha or 'master', max_count=1)
@@ -150,7 +150,6 @@ def index(request,path="",sha=""):
     for each in files:
         toinsert = {}
         myblob = each[1]
-        print "myblob is of type: ", type(myblob)
         if type(myblob) == git.tree.Tree:
             mytree = myblob
             toinsert['name'] = mytree.name
@@ -193,7 +192,7 @@ def archive(request,path="",sha=""):
     #git archive --format=zip --prefix=SITE_NAME/ HEAD:THE_DIRECTORY_HERE/ > archive.zip
     '''
     repo = git.Repo(settings.REPO_DIR)
-    mycommit = repo.commit(id=sha or 'master') #er, test this
+    mycommit = repo.commit(id=sha or 'master',path=path) #er, test this
     mytree = mycommit.tree()
     myitems = mytree.items()
     #now what about the path?
@@ -211,10 +210,21 @@ def history(request,path="",sha=""):
     should work for /history, some-dir/history, and some-file/history
     '''
     #display: id, committer.author, committer.author_email, date, message
-    data_for_history = {}
     if not pathExists(path=path,sha=sha):
         raise Http404
     #see: http://adl.serveftp.org:4567/history
+    #see: adl /var/www/git-wiki/lib/wiki/resource.rb
+    repo = git.Repo(settings.REPO_DIR)
+    log = repo.log(commit=sha or 'master',path=path)
+    history_data = []
+    for commit in log:
+        toadd = {}
+        toadd["commit_id"] = commit.id
+        toadd["author"] = commit.author.name
+        toadd["author_email"] = commit.author.email
+        toadd["date"] = commit.committed_date
+        toadd["message"] = commit.summary
+        history_data.append(toadd)
     return django.shortcuts.render_to_response("history.html", locals())
 
 def diff(request, path="", sha1="", sha2=""):
@@ -226,6 +236,8 @@ def diff(request, path="", sha1="", sha2=""):
     if not pathExists(path=path,sha=sha1) or not pathExists(path=path,sha=sha2):
         #that commit doesn't exist!
         raise Http404
+    repo = git.Repo(settings.REPO_DIR)
+    diff = repo.diff(a=sha1,b=sha2,paths=[path])
     return django.shortcuts.render_to_response("diff.html", locals())
 
 def upload(request, path=""):
@@ -282,9 +294,9 @@ def view(request,path="",sha=""):
     for each in files:
         myblob = each[1]
         filename = myblob.name
-        contents = myblob.data
         if filename == path:
             #we have a match
+            contents = myblob.data
             returncontents = contents
             break
     return django.shortcuts.render_to_response("view.html", locals())
