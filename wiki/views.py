@@ -17,7 +17,7 @@ from django.conf import settings
 # TODO: download a single page (not in a compressed archive)
 # django request objects: http://docs.djangoproject.com/en/dev/ref/request-response/)
 
-def index(request,sha=""):
+def index(request,path="",sha=""):
     repo = git.Repo(settings.REPO_DIR)
     commits = repo.commits(start=sha or 'master', max_count=1)
     head = commits[0]
@@ -29,7 +29,6 @@ def index(request,sha=""):
     #            head = commit
     #            print "the commit object is ", commit
     #print "sha is ", head.id, " and sha was: ", sha
-    #head = commits[0]
     files = head.tree.items()
     data_for_index = [] #start with nothing
     folders_for_index = []
@@ -145,6 +144,8 @@ def changelog(request,path="",sha=""):
 def view(request,path="",sha=""):
     '''
     view the path/file/page at a given commit
+
+    note: if it's a folder, return the index view.
     '''
     repo = git.Repo(settings.REPO_DIR)
     commits = repo.commits(start=sha or 'master',max_count=1)
