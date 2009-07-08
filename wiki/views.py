@@ -95,7 +95,7 @@ def index(request,path="",sha=""):
     if pathcheck and pathfilecheck:
         return view(request,path=path,sha=sha)
     if not pathcheck:
-        return new(path=path)
+        return new(request,path=path)
     repo = git.Repo(settings.REPO_DIR)
     commits = repo.commits(start=sha or 'master', max_count=1)
     head = commits[0]
