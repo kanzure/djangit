@@ -134,8 +134,10 @@ def index(request,path="",sha=""):
     if not pathcheck and path:
         return new(request,path=path)
     repo = git.Repo(settings.REPO_DIR)
-    commits = repo.commits(start=sha or 'master', max_count=1)
-    head = commits[0]
+    commits = repo.commits(start=sha or 'master', max_count=1, path=path)
+    print "commits is: ", commits, "\npath is: ", path
+    if len(commits) > 0: head = commits[0]
+    else: raise Http404 #oh boy
     #if sha == "" or not sha: head = commits[0]
     #else: #index view into the past
     #    print "for great justice!\n\n\n"
@@ -144,9 +146,15 @@ def index(request,path="",sha=""):
     #            head = commit
     #            print "the commit object is ", commit
     #print "sha is ", head.id, " and sha was: ", sha
-    files = head.tree.items()
+    
+    #FIXME: use find() and pathExists() and children() and pathIsFile() here
+    #files = head.tree.items()
+    files = find(path=path,sha=sha)
+    if len(files) == 1: files = files.items() #oopsies
+
     data_for_index = [] #start with nothing
     folders_for_index = []
+    print "\nfiles is: ", files
     for each in files:
         toinsert = {}
         myblob = each[1]
