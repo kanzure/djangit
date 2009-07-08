@@ -7,6 +7,7 @@ import wiki.models
 import git
 import os.path
 from django.conf import settings
+import string #for pathIsFile()
 
 #def about_pages(request, page):
 #    try:
@@ -17,22 +18,71 @@ from django.conf import settings
 # TODO: download a single page (not in a compressed archive)
 # django request objects: http://docs.djangoproject.com/en/dev/ref/request-response/)
 
+def pathExists(path="",sha=""):
+    '''
+    return True if the path exists
+    return False if the path does not exist
+    '''
+    #FIXME: handle SHAs
+    repo = git.Repo(settings.REPO_DIR)
+    tree = repo.tree()
+    mykeys = tree.keys()
+    if string.count(path, "/") > 0:
+        pieces = string.split(path, "/")
+        for each in pieces:
+            mykeys = tree.keys()
+            somedict = tree.__dict__["_contents"]
+            if not somedict.has_key(each):
+                return False
+            if type(somedict[each]) == git.tree.Tree:
+                tree = somedict[each]
+        return True #it exists
+    else:
+        #check if it exists in /
+        somedict = tree.__dict__["_contents"]
+        if somedict.has_key(path):
+            return True #has it
+        else:
+            return False #not there
+
 def pathIsFile(path="",sha=""):
     '''
-    return true if the path is a file
-    return false if the path is a path (folder or directory)
-    this does not check whether or not the given file or path exists
+    return True if the path is a file
+    return False if the path is a path (folder or directory)
+    return False if the path does not exist (is not a file nor a dir)
     '''
-    
-    #split the path into pieces
-    pieces = string.split(path,"/")
-
+    #FIXME: handle SHAs
     repo = git.Repo(settings.REPO_DIR)
     tree = repo.tree()
     mykeys = tree.keys() #or else it doesn't work wtf
-    somedict = tree.__dict__["_contents"]
-    somedict.has_key("filename or first folder name")
-    #while?    
+    if (string.count(path, "/") > 0):
+        pieces = string.split(path, "/")
+        for each in pieces:
+            #set tree to the tree with name 'each'
+            #if there is no tree with name 'each',
+            #then check if there's a file (git.blob.Blob)
+            #with that name.
+            mykeys = tree.keys() #or else it doesn't work wtf
+            somedict = tree.__dict__["_contents"]
+            if somedict.has_key(each):
+                #if it's a file, return.
+                if type(somedict[each]) == git.blob.Blob:
+                    return True #it's a file
+                if type(somedict[each]) == git.tree.Tree:
+                    #this gets tricky.
+                    tree = somedict[each]
+        #it's not a file.
+        return False #it's a dir, folder or tree
+    else:
+        #either a file or a directory in /
+        somedict = tree.__dict__["_contents"]
+        if somedict.has_key(path):
+            if type(somedict[path]) == git.blob.Blob:
+                return True #it's a file.
+            elif type(somedict[path]) == git.tree.Tree:
+                return False #it's a dir, folder or tree.
+        else:
+            return False #file or path not found
 
 def index(request,path="",sha=""):
     #show the index for a given path at a given sha id
