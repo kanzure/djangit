@@ -89,7 +89,13 @@ def pathIsFile(path="",sha=""):
 def index(request,path="",sha=""):
     #show the index for a given path at a given sha id
     #check if the path is a path and not a file
-    #
+    #if it is a file, show the view method
+    pathcheck = pathExists(path=path,sha=sha)
+    pathfilecheck = pathIsFile(path=path,sha=sha)
+    if pathcheck and pathfilecheck:
+        return view(request,path=path,sha=sha)
+    if not pathcheck:
+        return new(path=path)
     repo = git.Repo(settings.REPO_DIR)
     commits = repo.commits(start=sha or 'master', max_count=1)
     head = commits[0]
