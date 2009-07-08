@@ -30,9 +30,11 @@ def pop_path(path2):
     pieces.reverse()
     return string.join(pieces, "/")
 
-def children(path="",sha=""):
+def children(path="",sha="",depth=-1):
     '''
     find all trees and pages and combine them into a dict
+
+    depth=-1 means infinite depth. 
     '''
     if path == "": return {}
     repo = git.Repo(settings.REPO_DIR)
@@ -42,16 +44,29 @@ def children(path="",sha=""):
         if type(each[1]) == git.tree.Tree:
             #it's a folder
             returndict = dict(returndict, **{str(each[1].name):each[1]})
-            returndict = dict(returndict, **children(path=pop_path(copy.copy(path)),sha=sha))
+            if depth<0 or depth>0:
+                print "children(): fear the awesome powers of recursion!"
+                print "children(): path = ", path, "\tsha = ", sha, "\tdepth = ", depth
+                returndict = dict(returndict, **children(path=pop_path(copy.copy(path)),sha=sha,depth=depth-1))
         elif type(each[1]) == git.blob.Blob:
             #it's a file
             returndict = dict(returndict, **{str(each[1].name):each[1]})
     return returndict
 
-def find(path="",sha=""):
+def find(path="",sha="",depth=-1):
     #find resource in repo by path and commit SHA, return it.
     #FIXME: SHA
-    objects = children(path=path,sha=sha)
+    if not path: path = "/"
+    if path == "/":
+        repo = git.Repo(settings.REPO_DIR)
+        mytree = repo.tree().items()
+        #mydict = mytree.__dict__["_contents"]
+        #mydict.keys()
+        return mytree
+    objects = children(path=path,sha=sha,depth=depth)
+    print "find() says that path = ", path
+    print "find() says that sha = ", sha
+    print "find() says that objects = ", objects
     if objects.has_key(path):
         return objects[path]
     else:
@@ -152,15 +167,16 @@ def index(request,path="",sha=""):
     
     #FIXME: use find() and pathExists() and children() and pathIsFile() here
     #files = head.tree.items()
-    files = find(path=path,sha=sha)
+    files = find(path=path,sha=sha,depth=1)
     print "after the find. here is the type of find(): ", type(files)
+    print "\nfiles is: ", files
     if len(files) == 1: files = files.items() #oopsies
 
     data_for_index = [] #start with nothing
     folders_for_index = []
-    print "\nfiles is: ", files
     for each in files:
         toinsert = {}
+        print "******************* here's each: ", each
         myblob = each[1]
         if type(myblob) == git.tree.Tree:
             mytree = myblob
@@ -170,7 +186,14 @@ def index(request,path="",sha=""):
             folders_for_index.append(toinsert)
             #add this folder (not expanded) (FIXME)
         else: #just add it
-            thecommit = myblob.blame(repo,sha or 'master',path + "/" + myblob.basename)[0][0]
+            print "note the current myblob.basename is: ", myblob.basename
+            thethingy = myblob.basename
+            #if string.count("/",path) == 1:
+            #    thethingy = myblob.basename
+            #else:
+            #    thethingy = path + "/" + myblob.basename
+            print "and now thethingy = ", thethingy
+            thecommit = myblob.blame(repo,commit=sha or 'master',file=thethingy)[0][0]
             toinsert['author'] = thecommit.committer.name
             toinsert['author_email'] = thecommit.committer.email
             toinsert['id'] = head.id #thecommit.id
