@@ -8,6 +8,7 @@ import git
 import os.path
 from django.conf import settings
 import string #for pathIsFile()
+import copy
 
 #def about_pages(request, page):
 #    try:
@@ -18,11 +19,12 @@ import string #for pathIsFile()
 # TODO: download a single page (not in a compressed archive)
 # django request objects: http://docs.djangoproject.com/en/dev/ref/request-response/)
 
-def pop_path(path):
+def pop_path(path2):
     '''
     if path is super/star/destroyer, then pop_path will return star/destroyer
     '''
-    pieces = string.split(path, "/")
+    if (path2.count("/") == 0): return ""
+    pieces = string.split(path2, "/")
     pieces.reverse()
     pieces.pop()
     pieces.reverse()
@@ -32,17 +34,18 @@ def children(path="",sha=""):
     '''
     find all trees and pages and combine them into a dict
     '''
+    if path == "": return {}
     repo = git.Repo(settings.REPO_DIR)
-    files = repo.tree.items()
+    files = repo.tree().items()
     returndict = {}
     for each in files:
         if type(each[1]) == git.tree.Tree:
             #it's a folder
-            returndict = dict(returndict, **each[0])
-            returndict = dict(returndict, **children(path=pop_path(path),sha=sha))
+            returndict = dict(returndict, **{str(each[1].name):each[1]})
+            returndict = dict(returndict, **children(path=pop_path(copy.copy(path)),sha=sha))
         elif type(each[1]) == git.blob.Blob:
             #it's a file
-            returndict = dict(returndict, **each[0])
+            returndict = dict(returndict, **{str(each[1].name):each[1]})
     return returndict
 
 def find(path="",sha=""):
@@ -150,6 +153,7 @@ def index(request,path="",sha=""):
     #FIXME: use find() and pathExists() and children() and pathIsFile() here
     #files = head.tree.items()
     files = find(path=path,sha=sha)
+    print "after the find. here is the type of find(): ", type(files)
     if len(files) == 1: files = files.items() #oopsies
 
     data_for_index = [] #start with nothing
@@ -166,7 +170,7 @@ def index(request,path="",sha=""):
             folders_for_index.append(toinsert)
             #add this folder (not expanded) (FIXME)
         else: #just add it
-            thecommit = myblob.blame(repo,head,myblob.basename)[0][0]
+            thecommit = myblob.blame(repo,sha or 'master',path + "/" + myblob.basename)[0][0]
             toinsert['author'] = thecommit.committer.name
             toinsert['author_email'] = thecommit.committer.email
             toinsert['id'] = head.id #thecommit.id
