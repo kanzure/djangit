@@ -223,6 +223,9 @@ def diff(request, path="", sha1="", sha2=""):
 
     to select them, use the history view.
     '''
+    if not pathExists(path=path,sha=sha1) or not pathExists(path=path,sha=sha2):
+        #that commit doesn't exist!
+        raise Http404
     return django.shortcuts.render_to_response("diff.html", locals())
 
 def upload(request, path=""):
