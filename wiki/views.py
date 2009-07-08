@@ -37,6 +37,11 @@ def index(request,sha=""):
         myblob = each[1]
         print "myblob is of type: ", type(myblob)
         #FIXME: what happens when it's a git.tree.Tree object? (a directory in the repo)
+        if type(myblob) == git.tree.Tree:
+            mytree = myblob
+            name = mytree.name
+            files2 = mytree.items()
+            #do something
         thecommit = myblob.blame(repo,head,myblob.basename)[0][0]
         toinsert['author'] = thecommit.committer.name
         toinsert['author_email'] = thecommit.committer.email
