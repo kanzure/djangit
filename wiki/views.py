@@ -17,7 +17,27 @@ from django.conf import settings
 # TODO: download a single page (not in a compressed archive)
 # django request objects: http://docs.djangoproject.com/en/dev/ref/request-response/)
 
+def pathIsFile(path="",sha=""):
+    '''
+    return true if the path is a file
+    return false if the path is a path (folder or directory)
+    this does not check whether or not the given file or path exists
+    '''
+    
+    #split the path into pieces
+    pieces = string.split(path,"/")
+
+    repo = git.Repo(settings.REPO_DIR)
+    tree = repo.tree()
+    mykeys = tree.keys() #or else it doesn't work wtf
+    somedict = tree.__dict__["_contents"]
+    somedict.has_key("filename or first folder name")
+    #while?    
+
 def index(request,path="",sha=""):
+    #show the index for a given path at a given sha id
+    #check if the path is a path and not a file
+    #
     repo = git.Repo(settings.REPO_DIR)
     commits = repo.commits(start=sha or 'master', max_count=1)
     head = commits[0]
@@ -147,6 +167,12 @@ def view(request,path="",sha=""):
 
     note: if it's a folder, return the index view.
     '''
+    #check if the path is a path or if the path is a file
+    #if the path is a file, continue
+    #otherwise, return the index view
+    if path:
+        if not pathIsFile(path=path,sha=sha):
+            return index(request,path=path,sha=sha)
     repo = git.Repo(settings.REPO_DIR)
     commits = repo.commits(start=sha or 'master',max_count=1)
     head = commits[0]
