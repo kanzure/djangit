@@ -24,6 +24,7 @@ def pathExists(path="",sha=""):
     return False if the path does not exist
     '''
     #FIXME: handle SHAs
+    #TODO: refactor into recursive method
     repo = git.Repo(settings.REPO_DIR)
     tree = repo.tree()
     mykeys = tree.keys()
@@ -52,6 +53,7 @@ def pathIsFile(path="",sha=""):
     return False if the path does not exist (is not a file nor a dir)
     '''
     #FIXME: handle SHAs
+    #TODO: refactor into recursive method
     repo = git.Repo(settings.REPO_DIR)
     tree = repo.tree()
     mykeys = tree.keys() #or else it doesn't work wtf
