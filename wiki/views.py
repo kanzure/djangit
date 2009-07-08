@@ -18,6 +18,43 @@ import string #for pathIsFile()
 # TODO: download a single page (not in a compressed archive)
 # django request objects: http://docs.djangoproject.com/en/dev/ref/request-response/)
 
+def pop_path(path):
+    '''
+    if path is super/star/destroyer, then pop_path will return star/destroyer
+    '''
+    pieces = string.split(path, "/")
+    pieces.reverse()
+    pieces.pop()
+    pieces.reverse()
+    return string.join(pieces, "/")
+
+def children(path="",sha=""):
+    '''
+    find all trees and pages and combine them into a dict
+    '''
+    repo = git.Repo(settings.REPO_DIR)
+    files = repo.tree.items()
+    returndict = {}
+    for each in files:
+        if type(each[1]) == git.tree.Tree:
+            #it's a folder
+            returndict = dict(returndict, **each[0])
+            returndict = dict(returndict, **children(path=pop_path(path),sha=sha))
+        elif type(each[1]) == git.blob.Blob:
+            #it's a file
+            returndict = dict(returndict, **each[0])
+    return returndict
+
+def find(path="",sha=""):
+    #find resource in repo by path and commit SHA, return it.
+    #FIXME: SHA
+    objects = children(path=path,sha=sha)
+    if objects.has_key(path):
+        return objects[path]
+    else:
+        return False #path not found
+    pass
+
 def pathExists(path="",sha=""):
     '''
     return True if the path exists
@@ -174,6 +211,9 @@ def history(request,path="",sha=""):
     should work for /history, some-dir/history, and some-file/history
     '''
     #display: id, committer.author, committer.author_email, date, message
+    data_for_history = {}
+    if not pathExists(path=path,sha=sha):
+        raise Http404
     #see: http://adl.serveftp.org:4567/history
     return django.shortcuts.render_to_response("history.html", locals())
 
