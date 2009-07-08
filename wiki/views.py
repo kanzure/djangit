@@ -32,24 +32,27 @@ def index(request,sha=""):
     #head = commits[0]
     files = head.tree.items()
     data_for_index = [] #start with nothing
+    folders_for_index = []
     for each in files:
         toinsert = {}
         myblob = each[1]
         print "myblob is of type: ", type(myblob)
-        #FIXME: what happens when it's a git.tree.Tree object? (a directory in the repo)
         if type(myblob) == git.tree.Tree:
             mytree = myblob
-            name = mytree.name
+            toinsert['name'] = mytree.name
             files2 = mytree.items()
-            #do something
-        thecommit = myblob.blame(repo,head,myblob.basename)[0][0]
-        toinsert['author'] = thecommit.committer.name
-        toinsert['author_email'] = thecommit.committer.email
-        toinsert['id'] = head.id #thecommit.id
-        toinsert['date'] = thecommit.authored_date
-        toinsert['message'] = thecommit.message
-        toinsert['filename'] = myblob.basename
-        data_for_index.append(toinsert)
+            toinsert['id'] = mytree.id
+            folders_for_index.append(toinsert)
+            #add this folder (not expanded) (FIXME)
+        else: #just add it
+            thecommit = myblob.blame(repo,head,myblob.basename)[0][0]
+            toinsert['author'] = thecommit.committer.name
+            toinsert['author_email'] = thecommit.committer.email
+            toinsert['id'] = head.id #thecommit.id
+            toinsert['date'] = thecommit.authored_date
+            toinsert['message'] = thecommit.message
+            toinsert['filename'] = myblob.basename
+            data_for_index.append(toinsert)
     return django.shortcuts.render_to_response("index.html", locals())
 
 def edit(request, path="", sha=""):
