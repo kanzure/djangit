@@ -8,11 +8,12 @@ import pydjangitwiki.urls
 import os #for rmall
 
 def rmall(path="/tmp/some/dir/here/"):
+    top = path
     for root, dirs, files in os.walk(top, topdown=False):
         for name in files:
                 os.remove(os.path.join(root, name))
-                    for name in dirs:
-                            os.rmdir(os.path.join(root, name))
+        for name in dirs:
+                os.rmdir(os.path.join(root, name))
     return
 
 def find_urls(methodname="index"):
@@ -148,7 +149,8 @@ class TestViews(unittest.TestCase):
         #then check to see if those files are there
         #see git.Repo.init_bare(path,mkdir=True)
         #tmprepo = git.Repo.init_bare("/tmp/tmprepo/",mkdir=True)
-        
+        rmall("/tmp/tmprepo")
+        git.os.rmdir("/tmp/tmprepo")
         git.os.mkdir("/tmp/tmprepo")
         tmprepo = git.Git("/tmp/tmprepo/")
         tmprepo.execute(["git","init"])
@@ -157,6 +159,10 @@ class TestViews(unittest.TestCase):
         somefile.close()
         tmprepo.execute(["git","add","somefile"])
         tmprepo.execute(["git","commit","-m","commited somefile"])
+
+        children = pydjangitwiki.wiki.views.children(gitpath=tmprepo.get_dir)
+        print "the children = ", children
+        self.assertTrue(children.has_key("somefile"))
 
         rmall(tmprepo.path)
         git.os.rmdir(tmprepo.path)

@@ -3,7 +3,7 @@ from django.http import HttpResponse, Http404
 from django.template import TemplateDoesNotExist
 from django.views.generic.simple import direct_to_template
 import django.shortcuts #render_to_response
-import wiki.models
+#import wiki.models
 import git
 import os.path
 from django.conf import settings
@@ -30,14 +30,16 @@ def pop_path(path2):
     pieces.reverse()
     return string.join(pieces, "/")
 
-def children(path="",sha="",depth=-1):
+def children(path="",sha="",depth=-1,gitpath=""):
     '''
     find all trees and pages and combine them into a dict
 
     depth=-1 means infinite depth. 
     '''
-    if path == "": return {}
-    repo = git.Repo(settings.REPO_DIR)
+    if path == "" and gitpath == "": return {}
+    if not gitpath: gitpath = settings.REPO_DIR
+    repo = git.Repo(gitpath)
+    print "gitpath = ", gitpath
     files = repo.tree().items()
     returndict = {}
     for each in files:
