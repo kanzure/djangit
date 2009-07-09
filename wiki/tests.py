@@ -77,14 +77,46 @@ class TestURLs(unittest.TestCase):
         self.assertTrue(len(testresults) == len(validpatterns))
         return
     def test_upload(self):
-        pass
+        validpatterns = [
+                            "upload",
+                            "some/path/to/a/file/upload",
+                            #"some/path/to/a/dir/upload", #should this be invalid?
+                        ]
+        regexes = find_urls(methodname="upload")
+        testresults = resolve(regexes=regexes,validpatterns=validpatterns)
+        self.assertTrue(len(testresults) == len(validpatterns))
+        return
     def test_new(self):
-        pass
+        validpatterns = [
+                            "new",
+                            "some/path/to/a/dir/file/new",
+                        ]
+        regexes = find_urls(methodname="new")
+        testresults = resolve(regexes=regexes,validpatterns=validpatterns)
+        self.assertTrue(len(testresults) == len(validpatterns))
+        return
     def test_changelog(self):
-        pass
+        validpatterns = [
+                            "changelog.rss",
+                            "some/path/to/a/dir/file/changelog.rss",
+                        ]
+        regexes = find_urls(methodname="changelog")
+        testresults = resolve(regexes=regexes,validpatterns=validpatterns)
+        self.assertTrue(len(testresults) == len(validpatterns))
+        return
     def test_view(self):
-        pass
+        validpatterns = [
+                            "some/path/to/a/file",
+                            "some/path/to/a/dir/", #should redirect to index() however
+                            "some/path/to/a/file/SHA_HERE",
+                        ]
+        regexes = find_urls(methodname="view")
+        testresults = resolve(regexes=regexes,validpatterns=validpatterns)
+        self.assertTrue(len(testresults) == len(validpatterns))
+        return
     def test_render(self):
+        #not sure if we care about this hack of a function
+        #it should be rewritten anyway
         pass
 
 class TestViews(unittest.TestCase):
