@@ -5,6 +5,15 @@ import copy
 import pydjangitwiki.wiki.views
 import pydjangitwiki.urls
 #import django.test.client
+import os #for rmall
+
+def rmall(path="/tmp/some/dir/here/"):
+    for root, dirs, files in os.walk(top, topdown=False):
+        for name in files:
+                os.remove(os.path.join(root, name))
+                    for name in dirs:
+                            os.rmdir(os.path.join(root, name))
+    return
 
 def find_urls(methodname="index"):
     '''
@@ -138,6 +147,19 @@ class TestViews(unittest.TestCase):
         #make a repo, add files, commit, etc.
         #then check to see if those files are there
         #see git.Repo.init_bare(path,mkdir=True)
+        #tmprepo = git.Repo.init_bare("/tmp/tmprepo/",mkdir=True)
+        
+        git.os.mkdir("/tmp/tmprepo")
+        tmprepo = git.Git("/tmp/tmprepo/")
+        tmprepo.execute(["git","init"])
+        somefile = open("/tmp/tmprepo/somefile","w")
+        somefile.write("this is some file in the repository")
+        somefile.close()
+        tmprepo.execute(["git","add","somefile"])
+        tmprepo.execute(["git","commit","-m","commited somefile"])
+
+        rmall(tmprepo.path)
+        git.os.rmdir(tmprepo.path)
 
         #now make a repo, add files, commit, add folders, etc.
         #then check to see if those files & folders are there
