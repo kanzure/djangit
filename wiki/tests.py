@@ -157,12 +157,17 @@ class TestViews(unittest.TestCase):
         somefile = open("/tmp/tmprepo/somefile","w")
         somefile.write("this is some file in the repository")
         somefile.close()
+        fancyhat = open("/tmp/tmprepo/fancyhat","w")
+        fancyhat.write("there is a fancy hat here")
+        fancyhat.close()
         tmprepo.execute(["git","add","somefile"])
-        tmprepo.execute(["git","commit","-m","commited somefile"])
+        tmprepo.execute(["git","add","fancyhat"])
+        tmprepo.execute(["git","commit","-m","commited somefile and fancyhat"])
 
         children = pydjangitwiki.wiki.views.children(gitpath=tmprepo.get_dir)
         print "the children = ", children
         self.assertTrue(children.has_key("somefile"))
+        self.assertTrue(children.has_key("fancyhat"))
 
         rmall(tmprepo.path)
         git.os.rmdir(tmprepo.path)
