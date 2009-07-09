@@ -1,17 +1,10 @@
 #!/usr/bin/python
 #note: move this into the parent directory and run it.
 #is there a better way to do django unit tests?
-import os
-os.environ["DJANGO_SETTINGS_MODULE"] = "pydjangitwiki/settings"
-#done setting up environment
-import pydjangitwiki
-#for view testing
-import pydjangitwiki.wiki.views
-#for url testing
-import pydjangitwiki.urls
 import unittest
 import git
 import copy
+import pydjangitwiki.wiki.views
 
 class TestURLs(unittest.TestCase):
     def test_index(self):
