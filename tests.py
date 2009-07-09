@@ -52,6 +52,7 @@ class TestViews(unittest.TestCase):
         
         #make a repo, add files, commit, etc.
         #then check to see if those files are there
+        #see git.Repo.init_bare(path,mkdir=True)
 
         #now make a repo, add files, commit, add folders, etc.
         #then check to see if those files & folders are there
