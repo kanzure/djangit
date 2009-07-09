@@ -32,17 +32,50 @@ def resolve(regexes=[],validpatterns=[]):
 class TestURLs(unittest.TestCase):
     def test_index(self):
         #pydjangitwiki.urls.urlpatterns that should return 'pydjangitwiki.wiki.views.index'
-        validpatterns = ["/", "", "/folder-name/", "folder-name"]
+        #note: some of these patterns are handled by 'view' which then calls index()
+        #validpatterns = ["/", "", "/folder-name/", "folder-name"]
+        validpatterns = [""]
         regexes = find_urls(methodname="index")
         testresults = resolve(regexes=regexes,validpatterns=validpatterns)
         self.assertTrue(len(testresults) == len(validpatterns))
         return
     def test_edit(self):
-        pass
+        validpatterns = [
+                            "edit/",
+                            "edit",
+                            "home/something/something/edit",
+                            "home/something/something/edit/",
+                        ]
+        regexes = find_urls(methodname="edit")
+        testresults = resolve(regexes=regexes,validpatterns=validpatterns)
+        self.assertTrue(len(testresults) == len(validpatterns))
+        return
     def test_archive(self):
-        pass
+        validpatterns = [
+                            "archive/", #or is this a dir?
+                            "archive",
+                            "home/something/something/archive", #or is this a file?
+                            "home/something/something/archive/", #or is this a dir?
+                            "/archive", #or is this a file?
+                            "/archive/", #or is this a dir?
+                        ]
+        regexes = find_urls(methodname="archive")
+        testresults = resolve(regexes=regexes,validpatterns=validpatterns)
+        self.assertTrue(len(testresults) == len(validpatterns))
+        return
     def test_history(self):
-        pass
+        validpatterns = [
+                            "history",
+                            "/history", #or is this a file?
+                            "/history/", #or is this a dir?
+                            "history/", #or is this a dir?
+                            "some/path/here/history",
+                            "some/path/here/history/", #or is this a dir?
+                        ]
+        regexes = find_urls(methodname="history")
+        testresults = resolve(regexes=regexes,validpatterns=validpatterns)
+        self.assertTrue(len(testresults) == len(validpatterns))
+        return
     def test_upload(self):
         pass
     def test_new(self):
