@@ -1,15 +1,42 @@
 #!/usr/bin/python
-#note: move this into the parent directory and run it.
-#is there a better way to do django unit tests?
 import unittest
 import git
 import copy
 import pydjangitwiki.wiki.views
+import pydjangitwiki.urls
+#import django.test.client
+
+def find_urls(methodname="index"):
+    '''
+    return all RegexURLPattern objects that call a certain method
+    '''
+    patterns = pydjangitwiki.urls.urlpatterns
+    returnlist = []
+    for pat in patterns:
+        if pat.callback.__name__ == methodname:
+            #see also: pat.callback.__module__
+            returnlist.append(pat)
+    return returnlist
+
+def resolve(regexes=[],validpatterns=[]):
+    returndict = {}
+    for each in regexes:
+        for pattern in validpatterns:
+            if not each.resolve(pattern) == None:
+                if not returndict.has_key(pattern):
+                    returndict[pattern] = [each]
+                else:
+                    returndict[pattern].append(each)
+    return returndict
 
 class TestURLs(unittest.TestCase):
     def test_index(self):
-        #pydjangitwiki.urls.urlpatterns that should return index
-        pass
+        #pydjangitwiki.urls.urlpatterns that should return 'pydjangitwiki.wiki.views.index'
+        validpatterns = ["/", "", "/folder-name/", "folder-name"]
+        regexes = find_urls(methodname="index")
+        testresults = resolve(regexes=regexes,validpatterns=validpatterns)
+        self.assertTrue(len(testresults) == len(validpatterns))
+        return
     def test_edit(self):
         pass
     def test_archive(self):
