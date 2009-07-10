@@ -201,7 +201,12 @@ class TestViews(unittest.TestCase):
     def test_find(self):
         pass
     def test_pathExists(self):
-        pass
+        tmprepo = begin(path="/tmp/tmprepo")
+        addfile(repo=tmprepo,filename="superfile",contents="file contents, you see",message="added superfile")
+        self.assertTrue(pydjangitwiki.wiki.views.pathExists(path="superfile",gitrepo=tmprepo))
+        self.assertFalse(pydjangitwiki.wiki.views.pathExists(path="some_file_that_does_not_exist",gitrepo=tmprepo))
+        end(tmprepo.git.get_dir)
+        return
     def test_pathIsFile(self):
         tmprepo = begin(path="/tmp/tmprepo")
         print "test_pathIsFile says that tmprepo = ", tmprepo
