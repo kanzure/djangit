@@ -218,6 +218,22 @@ class TestViews(unittest.TestCase):
         addfile(repo=tmprepo,filename="superfile",contents="file contents, you see",message="added superfile")
         self.assertTrue(pydjangitwiki.wiki.views.pathExists(path="superfile",gitrepo=tmprepo))
         self.assertFalse(pydjangitwiki.wiki.views.pathExists(path="some_file_that_does_not_exist",gitrepo=tmprepo))
+        #check a non-existant folder
+        self.assertFalse(pydjangitwiki.wiki.views.pathExists(path="folder/to/the/place/",gitrepo=tmprepo))
+        self.assertFalse(pydjangitwiki.wiki.views.pathExists(path="folder/to/the/place",gitrepo=tmprepo))
+        #make a folder
+        blah = addfolder(repo=tmprepo,foldername="folder")
+        #make a file in the folder
+        addfile(repo=tmprepo,filename="folder/somefile",contents="contents of the file go here",message="added a file")
+        children = pydjangitwiki.wiki.views.children(gitpath=tmprepo.git.get_dir)
+        #test the folder
+        self.assertTrue(pydjangitwiki.wiki.views.pathExists(path="folder",gitrepo=tmprepo))
+        #self.assertTrue(pydjangitwiki.wiki.views.pathExists(path="folder/",gitrepo=tmprepo)) #should this work?
+        #self.assertTrue(pydjangitwiki.wiki.views.pathExists(path="/folder",gitrepo=tmprepo))
+        #self.assertTrue(pydjangitwiki.wiki.views.pathExists(path="/folder/",gitrepo=tmprepo))
+        #make a file in the folder
+        #test the file
+        self.assertTrue(pydjangitwiki.wiki.views.pathExists(path="folder/somefile",gitrepo=tmprepo))
         end(tmprepo.git.get_dir)
         return
     def test_pathIsFile(self):
