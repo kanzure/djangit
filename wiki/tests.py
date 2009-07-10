@@ -16,6 +16,14 @@ def addfile(repo="",filename="myfilename",contents="contents",message="commit me
     repo.git.execute(["git","commit","-m",message])
     return True
 
+def addfolder(repo="",foldername="myfoldername",message="commit message"):
+    if not repo: return False
+    git.os.mkdir(repo.git.get_dir + "/" + foldername)
+    repo.git.execute(["git","add",foldername])
+    #you can't commit just a folder
+    #repo.git.execute(["git","commit","-m",message])
+    return True
+
 def rmall(path="/tmp/some/dir/here/"):
     top = path
     for root, dirs, files in os.walk(top, topdown=False):
@@ -152,6 +160,11 @@ class TestURLs(unittest.TestCase):
         pass
 
 class TestViews(unittest.TestCase):
+    #TODO: test_addfile
+    #TODO: test_addfolder
+    #TODO: test_rmall
+    #TODO: test_begin
+    #TODO: test_end
     def test_pop_path(self):
        path = "super/star/destroyer"
        self.assertTrue(pydjangitwiki.wiki.views.pop_path(path)=="star/destroyer")
@@ -214,6 +227,17 @@ class TestViews(unittest.TestCase):
         self.assertTrue(pydjangitwiki.wiki.views.pathIsFile(path="myfilename",gitrepo=tmprepo))
         self.assertFalse(pydjangitwiki.wiki.views.pathIsFile(path="/",gitrepo=tmprepo))
         self.assertFalse(pydjangitwiki.wiki.views.pathIsFile(path="some_file_that_does_not_exist",gitrepo=tmprepo))
+        #make a folder, add a file.
+        addfolder(repo=tmprepo,foldername="foldername",message="added a folder, behold!")
+        #test the folder
+        self.assertFalse(pydjangitwiki.wiki.views.pathIsFile(path="foldername/",gitrepo=tmprepo))
+        self.assertFalse(pydjangitwiki.wiki.views.pathIsFile(path="foldername",gitrepo=tmprepo))
+        #add a file
+        addfile(repo=tmprepo,filename="foldername/some-super-file",contents="well, here goes nothing",message="trying subdir adding file")
+        #test the file
+        self.assertTrue(pydjangitwiki.wiki.views.pathIsFile(path="foldername/some-super-file",gitrepo=tmprepo))
+        #what about another file in the dir?
+        self.assertFalse(pydjangitwiki.wiki.views.pathIsFile(path="foldername/other_file_here",gitrepo=tmprepo))
         end(tmprepo.git.get_dir)
         return
     def test_index(self):
