@@ -9,11 +9,11 @@ import os #for rmall
 
 def addfile(repo="",filename="myfilename",contents="contents",message="commit message"):
     if not repo: return False
-    thefile = open(repo.get_dir + "/" + filename,"w")
+    thefile = open(repo.git.get_dir + "/" + filename,"w")
     thefile.write(contents)
     thefile.close()
-    repo.execute(["git","add",filename])
-    repo.execute(["git","commit","-m",message])
+    repo.git.execute(["git","add",filename])
+    repo.git.execute(["git","commit","-m",message])
     return True
 
 def rmall(path="/tmp/some/dir/here/"):
@@ -29,8 +29,8 @@ def begin(path="/tmp/tmprepo"):
     rmall(path)
     if git.os.path.exists(path): git.os.rmdir(path)
     git.os.mkdir(path)
-    tmprepo = git.Git(path)
-    tmprepo.execute(["git","init"])
+    tmprepo = git.Repo.create(path,mkdir=True)
+    tmprepo.git.execute(["git","init"])
     return tmprepo
 
 def end(path="/tmp/tmprepo"):
@@ -204,9 +204,12 @@ class TestViews(unittest.TestCase):
         pass
     def test_pathIsFile(self):
         tmprepo = begin(path="/tmp/tmprepo")
+        print "test_pathIsFile says that tmprepo = ", tmprepo
         addfile(repo=tmprepo,filename="myfilename",contents="these are the contents of the file",message="added myfilename")
-        self.assertTrue(pydjangitwiki.wiki.views.pathIsFile(path="myfilename",gitpath=tmprepo))
-        end(tmprepo.get_dir)
+        self.assertTrue(pydjangitwiki.wiki.views.pathIsFile(path="myfilename",gitrepo=tmprepo))
+        self.assertFalse(pydjangitwiki.wiki.views.pathIsFile(path="/",gitrepo=tmprepo))
+        self.assertFalse(pydjangitwiki.wiki.views.pathIsFile(path="some_file_that_does_not_exist",gitrepo=tmprepo))
+        end(tmprepo.git.get_dir)
         return
     def test_index(self):
         pass

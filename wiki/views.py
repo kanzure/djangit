@@ -103,7 +103,7 @@ def pathExists(path="",sha=""):
         else:
             return False #not there
 
-def pathIsFile(path="",sha=""):
+def pathIsFile(path="",sha="",gitrepo=""):
     '''
     return True if the path is a file
     return False if the path is a path (folder or directory)
@@ -111,7 +111,11 @@ def pathIsFile(path="",sha=""):
     '''
     #FIXME: handle SHAs
     #TODO: refactor into recursive method
-    repo = git.Repo(settings.REPO_DIR)
+    if not gitrepo or type(gitrepo)==type("hi"): gitrepo = settings.REPO_DIR
+    if type(gitrepo) == git.repo.Repo:
+        repo = gitrepo
+    else:
+        repo = git.Repo(gitrepo)
     tree = repo.tree()
     mykeys = tree.keys() #or else it doesn't work wtf
     if (string.count(path, "/") > 0):
