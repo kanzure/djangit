@@ -7,6 +7,15 @@ import pydjangitwiki.urls
 #import django.test.client
 import os #for rmall
 
+def addfile(repo="",filename="myfilename",contents="contents",message="commit message"):
+    if not repo: return False
+    thefile = open(repo.get_dir + "/" + filename,"w")
+    thefile.write(contents)
+    thefile.close()
+    repo.execute(["git","add",filename])
+    repo.execute(["git","commit","-m",message])
+    return True
+
 def rmall(path="/tmp/some/dir/here/"):
     top = path
     for root, dirs, files in os.walk(top, topdown=False):
@@ -14,6 +23,19 @@ def rmall(path="/tmp/some/dir/here/"):
                 os.remove(os.path.join(root, name))
         for name in dirs:
                 os.rmdir(os.path.join(root, name))
+    return
+
+def begin(path="/tmp/tmprepo"):
+    rmall(path)
+    if git.os.path.exists(path): git.os.rmdir(path)
+    git.os.mkdir(path)
+    tmprepo = git.Git(path)
+    tmprepo.execute(["git","init"])
+    return tmprepo
+
+def end(path="/tmp/tmprepo"):
+    rmall(path)
+    git.os.rmdir(path)
     return
 
 def find_urls(methodname="index"):
@@ -150,7 +172,7 @@ class TestViews(unittest.TestCase):
         #see git.Repo.init_bare(path,mkdir=True)
         #tmprepo = git.Repo.init_bare("/tmp/tmprepo/",mkdir=True)
         rmall("/tmp/tmprepo")
-        git.os.rmdir("/tmp/tmprepo")
+        if git.os.path.exists("/tmp/tmprepo"): git.os.rmdir("/tmp/tmprepo")
         git.os.mkdir("/tmp/tmprepo")
         tmprepo = git.Git("/tmp/tmprepo/")
         tmprepo.execute(["git","init"])
@@ -169,8 +191,8 @@ class TestViews(unittest.TestCase):
         self.assertTrue(children.has_key("somefile"))
         self.assertTrue(children.has_key("fancyhat"))
 
-        rmall(tmprepo.path)
-        git.os.rmdir(tmprepo.path)
+        rmall(tmprepo.get_dir)
+        git.os.rmdir(tmprepo.get_dir)
 
         #now make a repo, add files, commit, add folders, etc.
         #then check to see if those files & folders are there
@@ -181,7 +203,11 @@ class TestViews(unittest.TestCase):
     def test_pathExists(self):
         pass
     def test_pathIsFile(self):
-        pass
+        tmprepo = begin(path="/tmp/tmprepo")
+        addfile(repo=tmprepo,filename="myfilename",contents="these are the contents of the file",message="added myfilename")
+        self.assertTrue(pydjangitwiki.wiki.views.pathIsFile(path="myfilename",gitpath=tmprepo))
+        end(tmprepo.get_dir)
+        return
     def test_index(self):
         pass
     def test_edit(self):
