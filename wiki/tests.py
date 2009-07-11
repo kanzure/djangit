@@ -4,7 +4,8 @@ import git
 import copy
 import pydjangitwiki.wiki.views
 import pydjangitwiki.urls
-#import django.test.client
+import pydjangitwiki.settings
+import django.test.client
 import os #for rmall
 
 def addfile(repo="",filename="myfilename",contents="contents",message="commit message"):
@@ -39,6 +40,7 @@ def begin(path="/tmp/tmprepo"):
     git.os.mkdir(path)
     tmprepo = git.Repo.create(path,mkdir=True)
     tmprepo.git.execute(["git","init"])
+    pydjangitwiki.settings.REPO_DIR = path
     return tmprepo
 
 def end(path="/tmp/tmprepo"):
@@ -69,7 +71,8 @@ def resolve(regexes=[],validpatterns=[]):
                     returndict[pattern].append(each)
     return returndict
 
-class TestURLs(unittest.TestCase):
+#class TestURLs(unittest.TestCase):
+class TestURLs:
     def test_index(self):
         #pydjangitwiki.urls.urlpatterns that should return 'pydjangitwiki.wiki.views.index'
         #note: some of these patterns are handled by 'view' which then calls index()
@@ -257,7 +260,48 @@ class TestViews(unittest.TestCase):
         end(tmprepo.git.get_dir)
         return
     def test_index(self):
-        pass
+        #make a repository
+        tmprepo = begin(path="/tmp/tmprepo2/")
+        
+        #add a file
+        filenamevar = "the_filename"
+        addfile(repo=tmprepo,filename=filenamevar,contents="this is the content of the file",message="added the_filename")
+        #test that the dict worked
+        c = django.test.client.Client()
+        #FIXME: c.get() calls pydjangitwiki.wiki.index() but it ignores pydjangitwiki.settings.REPO_DIR modifications made in begin()
+        response = c.get("/")
+        self.assertTrue(response.context[0].dicts[0].keys().__contains__("data_for_index"))
+        #test that the file shows up in the index's output
+        has_right_filename = False
+        for each in response.context[0].dicts[0]["data_for_index"]:
+            print "_________________ each is = ", each
+            if each.has_key("filename"):
+                if each["filename"] == filenamevar:
+                    has_right_filename = True
+        self.assertTrue(has_right_filename)
+
+        #add a folder
+        #add a file within that folder
+        foldernamevar = "the-folder-name"
+        filenamevaragain = foldernamevar + "/" + "somethingfilesomething.so"
+        addfolder(repo=tmprepo,foldername=foldernamevar,message="added a folder")
+        addfile(repo=tmprepo,filename=filenamevaragain,contents="contents of a file go here.\nnewline.\ttab\n\t\ttabtab.",message="added a file")
+        c = django.test.client.Client()
+        response = c.get("/")
+        #it should have a folder.
+        self.assertTrue(response.context[0].dicts[0].keys().__contains__("folders_for_index"))
+        #it should have data for the index
+        self.assertTrue(response.context[0].dicts[0].keys().__contains__("data_for_index"))
+        #it should have the folder
+        self.assertTrue(response.context[0].dicts[0]["folders_for_index"][0].has_key("name"))
+        self.assertTrue(response.context[0].dicts[0]["folders_for_index"][0]["name"] == foldernamevar)
+        #it should have the file
+        #note that the only reason we can do this is because there's one file in the output.
+        self.assertTrue(response.context[0].dicts[0]["data_for_index"][0]["name"] == filenamevaragain)
+
+        #cleanup
+        end(tmprepo.git.get_dir)
+        return
     def test_edit(self):
         pass
     def test_archive(self):
@@ -278,4 +322,5 @@ class TestViews(unittest.TestCase):
         pass
 
 if __name__ == '__main__':
+    django.test.utils.setup_test_environment()
     unittest.main()

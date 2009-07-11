@@ -75,14 +75,17 @@ def find(path="",sha="",depth=-1):
         return False #path not found
     pass
 
-def pathExists(path="",sha=""):
+def pathExists(path="",sha="",gitrepo=""):
     '''
     return True if the path exists
     return False if the path does not exist
     '''
     #FIXME: handle SHAs
     #TODO: refactor into recursive method
-    repo = git.Repo(settings.REPO_DIR)
+    if type(gitrepo) == git.repo.Repo:
+        repo = gitrepo
+    else:
+        repo = git.Repo(settings.REPO_DIR)
     tree = repo.tree()
     mykeys = tree.keys()
     if string.count(path, "/") > 0:
@@ -147,7 +150,7 @@ def pathIsFile(path="",sha="",gitrepo=""):
         else:
             return False #file or path not found
 
-def index(request,path="",sha=""):
+def index(request,path="",sha="",repodir=""):
     #show the index for a given path at a given sha id
     #check if the path is a path and not a file
     #if it is a file, show the view method
@@ -157,7 +160,12 @@ def index(request,path="",sha=""):
         return view(request,path=path,sha=sha)
     if not pathcheck and path:
         return new(request,path=path)
-    repo = git.Repo(settings.REPO_DIR)
+    if repodir == "":
+        repo = git.Repo(settings.REPO_DIR)
+    if type(repodir) = git.repo.Repo:
+        repo = repodir
+    if type(repodir) == type(""):
+        repo = git.Repo(repodir)
     commits = repo.commits(start=sha or 'master', max_count=1, path=path)
     print "commits is: ", commits, "\npath is: ", path
     if len(commits) > 0: head = commits[0]
