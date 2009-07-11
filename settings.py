@@ -6,6 +6,7 @@ TEMPLATE_DEBUG = DEBUG
 
 SITE_NAME = "site name in settings.py"
 REPO_DIR = "/home/kanzure/sandbox/testrepo/"
+REPO_DIR = "/tmp/tmprepo/"
 #REPO_DIR = "/home/kanzure/code/skdb/"
 
 ADMINS = (

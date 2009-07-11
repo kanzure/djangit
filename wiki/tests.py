@@ -6,6 +6,7 @@ import pydjangitwiki.wiki.views
 import pydjangitwiki.urls
 import pydjangitwiki.settings
 import django.test.client
+import django.test
 import os #for rmall
 
 def addfile(repo="",filename="myfilename",contents="contents",message="commit message"):
@@ -162,7 +163,7 @@ class TestURLs:
         #it should be rewritten anyway
         pass
 
-class TestViews(unittest.TestCase):
+class TestViews(django.test.TestCase):
     #TODO: test_addfile
     #TODO: test_addfolder
     #TODO: test_rmall
@@ -261,13 +262,13 @@ class TestViews(unittest.TestCase):
         return
     def test_index(self):
         #make a repository
-        tmprepo = begin(path="/tmp/tmprepo2/")
+        tmprepo = begin(path="/tmp/tmprepo")
         
         #add a file
         filenamevar = "the_filename"
         addfile(repo=tmprepo,filename=filenamevar,contents="this is the content of the file",message="added the_filename")
         #test that the dict worked
-        c = django.test.client.Client()
+        c = self.client
         #FIXME: c.get() calls pydjangitwiki.wiki.index() but it ignores pydjangitwiki.settings.REPO_DIR modifications made in begin()
         response = c.get("/")
         self.assertTrue(response.context[0].dicts[0].keys().__contains__("data_for_index"))
@@ -286,7 +287,7 @@ class TestViews(unittest.TestCase):
         filenamevaragain = foldernamevar + "/" + "somethingfilesomething.so"
         addfolder(repo=tmprepo,foldername=foldernamevar,message="added a folder")
         addfile(repo=tmprepo,filename=filenamevaragain,contents="contents of a file go here.\nnewline.\ttab\n\t\ttabtab.",message="added a file")
-        c = django.test.client.Client()
+        c = self.client
         response = c.get("/")
         #it should have a folder.
         self.assertTrue(response.context[0].dicts[0].keys().__contains__("folders_for_index"))
@@ -323,4 +324,5 @@ class TestViews(unittest.TestCase):
 
 if __name__ == '__main__':
     django.test.utils.setup_test_environment()
+    #django.conf.settings.configure(default_settings=pydjangitwiki.settings,REPO_DIR="/tmp/tmprepo")
     unittest.main()

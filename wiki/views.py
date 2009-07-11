@@ -184,7 +184,7 @@ def index(request,path="",sha="",repodir=""):
     files = find(path=path,sha=sha,depth=1)
     print "after the find. here is the type of find(): ", type(files)
     print "\nfiles is: ", files
-    if len(files) == 1: files = files.items() #oopsies
+    if len(files) == 1 and not (type(files) == type([])): files = files.items() #oopsies
 
     data_for_index = [] #start with nothing
     folders_for_index = []
