@@ -162,7 +162,7 @@ def index(request,path="",sha="",repodir=""):
         return new(request,path=path)
     if repodir == "":
         repo = git.Repo(settings.REPO_DIR)
-    if type(repodir) = git.repo.Repo:
+    if type(repodir) == git.repo.Repo:
         repo = repodir
     if type(repodir) == type(""):
         repo = git.Repo(repodir)
