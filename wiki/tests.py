@@ -212,7 +212,6 @@ class TestViews(django.test.TestCase):
         tmprepo.execute(["git","commit","-m","commited somefile and fancyhat"])
 
         children = pydjangitwiki.wiki.views.children(gitpath=tmprepo.get_dir)
-        print "the children = ", children
         self.assertTrue(children.has_key("somefile"))
         self.assertTrue(children.has_key("fancyhat"))
 
@@ -250,7 +249,6 @@ class TestViews(django.test.TestCase):
         return
     def test_pathIsFile(self):
         tmprepo = begin(path="/tmp/tmprepo")
-        print "test_pathIsFile says that tmprepo = ", tmprepo
         addfile(repo=tmprepo,filename="myfilename",contents="these are the contents of the file",message="added myfilename")
         self.assertTrue(pydjangitwiki.wiki.views.pathIsFile(path="myfilename",gitrepo=tmprepo))
         self.assertFalse(pydjangitwiki.wiki.views.pathIsFile(path="/",gitrepo=tmprepo))
@@ -305,7 +303,7 @@ class TestViews(django.test.TestCase):
         self.assertTrue(response.context[0].dicts[0]["folders_for_index"][0]["name"] == foldernamevar)
         #it should have the file
         #note that the only reason we can do this is because there's one file in the output.
-        self.assertTrue(response.context[0].dicts[0]["data_for_index"][0]["name"] == filenamevaragain)
+        self.assertTrue(response.context[0].dicts[0]["data_for_index"][0]["filename"] == filenamevar)
 
         #cleanup
         end(tmprepo.git.get_dir)

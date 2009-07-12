@@ -161,7 +161,6 @@ def index(request,path="",sha="",repodir=""):
     if type(repodir) == type("") and not (repodir == ""):
         repo = git.Repo(repodir)
     commits = repo.commits(start=sha or 'master', max_count=1, path=path)
-    print "commits is: ", commits, "\npath is: ", path
     if len(commits) > 0: head = commits[0]
     else: raise Http404 #oh boy
     #if sha == "" or not sha: head = commits[0]
@@ -176,15 +175,12 @@ def index(request,path="",sha="",repodir=""):
     #FIXME: use find() and pathExists() and children() and pathIsFile() here
     #files = head.tree.items()
     files = find(path=path,sha=sha,depth=1)
-    print "after the find. here is the type of find(): ", type(files)
-    print "\nfiles is: ", files
     if len(files) == 1 and not (type(files) == type([])): files = files.items() #oopsies
 
     data_for_index = [] #start with nothing
     folders_for_index = []
     for each in files:
         toinsert = {}
-        print "******************* here's each: ", each
         myblob = each[1]
         if type(myblob) == git.tree.Tree:
             mytree = myblob
@@ -194,13 +190,11 @@ def index(request,path="",sha="",repodir=""):
             folders_for_index.append(toinsert)
             #add this folder (not expanded) (FIXME)
         else: #just add it
-            print "note the current myblob.basename is: ", myblob.basename
             thethingy = myblob.basename
             #if string.count("/",path) == 1:
             #    thethingy = myblob.basename
             #else:
             thethingy = repo.git.git_dir + "/" + myblob.basename
-            print "and now thethingy = ", thethingy
             thecommit = myblob.blame(repo,commit=sha or 'master',file=thethingy)[0][0]
             toinsert['author'] = thecommit.committer.name
             toinsert['author_email'] = thecommit.committer.email
