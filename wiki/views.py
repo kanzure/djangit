@@ -39,7 +39,6 @@ def children(path="",sha="",depth=-1,gitpath=""):
     if path == "" and gitpath == "": return {}
     if not gitpath: gitpath = settings.REPO_DIR
     repo = git.Repo(gitpath)
-    print "gitpath = ", gitpath
     files = repo.tree().items()
     returndict = {}
     for each in files:
@@ -47,8 +46,6 @@ def children(path="",sha="",depth=-1,gitpath=""):
             #it's a folder
             returndict = dict(returndict, **{str(each[1].name):each[1]})
             if depth<0 or depth>0:
-                print "children(): fear the awesome powers of recursion!"
-                print "children(): path = ", path, "\tsha = ", sha, "\tdepth = ", depth
                 returndict = dict(returndict, **children(path=pop_path(copy.copy(path)),sha=sha,depth=depth-1))
         elif type(each[1]) == git.blob.Blob:
             #it's a file
@@ -66,9 +63,6 @@ def find(path="",sha="",depth=-1):
         #mydict.keys()
         return mytree
     objects = children(path=path,sha=sha,depth=depth)
-    print "find() says that path = ", path
-    print "find() says that sha = ", sha
-    print "find() says that objects = ", objects
     if objects.has_key(path):
         return objects[path]
     else:
