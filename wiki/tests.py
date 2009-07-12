@@ -36,20 +36,19 @@ def rmall(path="/tmp/some/dir/here/"):
     return
 
 def begin(path="/tmp/tmprepo",barepath="/tmp/bare-repo/"):
-    #FIXME: use git.Git.execute(git.Git(path),["git","init"])
+    #mkdir tmpdir; cd tmpdir; git init; cd ..; git clone --bare tmpdir/ bare/;
     rmall(path)
     if git.os.path.exists(path): git.os.rmdir(path)
     git.os.mkdir(path)
     rmall(barepath)
     if git.os.path.exists(barepath): git.os.rmdir(barepath)
-    tmprepo = git.Repo.create(barepath,mkdir=True)
+    #git.os.mkdir(barepath)
+    #barerepo = git.Repo.create(barepath)#mkdr=True)
     git.Git.execute(git.Git(path),["git","init"])
-    git.Git.execute(git.Git(path),["git","clone",barepath,path])
+    git.Git.execute(git.Git(path),["git","clone","--bare",path,barepath])
     pydjangitwiki.settings.REPO_DIR = path
 
-    #mkdir tmpdir; cd tmpdir; git init; cd ..; git clone --bare tmpdir/ bare/;
-
-    return (tmprepo,git.Repo(path))
+    return git.Repo(path)
 
 def end(path="/tmp/tmprepo",barepath="/tmp/bare-repo/"):
     rmall(path)
@@ -227,7 +226,7 @@ class TestViews(django.test.TestCase):
     def test_find(self):
         pass
     def test_pathExists(self):
-        tmprepo = begin(path="/tmp/tmprepo")[1]
+        tmprepo = begin(path="/tmp/tmprepo")
         addfile(repo=tmprepo,filename="superfile",contents="file contents, you see",message="added superfile")
         self.assertTrue(pydjangitwiki.wiki.views.pathExists(path="superfile",gitrepo=tmprepo))
         self.assertFalse(pydjangitwiki.wiki.views.pathExists(path="some_file_that_does_not_exist",gitrepo=tmprepo))
@@ -250,7 +249,7 @@ class TestViews(django.test.TestCase):
         end(tmprepo.git.get_dir)
         return
     def test_pathIsFile(self):
-        tmprepo = begin(path="/tmp/tmprepo")[1]
+        tmprepo = begin(path="/tmp/tmprepo")
         print "test_pathIsFile says that tmprepo = ", tmprepo
         addfile(repo=tmprepo,filename="myfilename",contents="these are the contents of the file",message="added myfilename")
         self.assertTrue(pydjangitwiki.wiki.views.pathIsFile(path="myfilename",gitrepo=tmprepo))
@@ -271,7 +270,7 @@ class TestViews(django.test.TestCase):
         return
     def test_index(self):
         #make a repository
-        tmprepo = begin(path="/tmp/tmprepo")[1]
+        tmprepo = begin(path="/tmp/tmprepo/")
         
         #add a file
         filenamevar = "the_filename"
