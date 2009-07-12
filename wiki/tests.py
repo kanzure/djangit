@@ -321,6 +321,14 @@ class TestViews(django.test.TestCase):
     def test_changelog(self):
         pass
     def test_view(self):
+        tmprepo = begin(path="/tmp/tmprepo")
+        filenamevar = "the_filename"
+        filecontent = "filecontent goes here"
+        addfile(repo=tmprepo,filename=filenamevar,contents=filecontent,message="added the_filename")
+        c = self.client
+        response = c.get("/" + filenamevar)
+        self.assertTrue(response.context[0].dicts[0]["returncontents"]==filecontent)
+        end(tmprepo.git.get_dir)
         pass
     def test_render(self):
         #not sure if this needs to be tested
