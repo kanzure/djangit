@@ -311,12 +311,13 @@ def changelog(request,path="",sha=""):
     '''
     return django.shortcuts.render_to_response("changelog.rss", locals())
 
-def view(request,path="",sha=""):
+def view(request,path="",sha="master"):
     '''
     view the path/file/page at a given commit
 
     note: if it's a folder, return the index view.
     '''
+    print "************* ///// IN VIEW /////// **************"
     #check if the path is a path or if the path is a file
     #if the path is a file, continue
     #otherwise, return the index view
@@ -324,13 +325,17 @@ def view(request,path="",sha=""):
         if not pathIsFile(path=path,sha=sha):
             return index(request,path=path,sha=sha)
     repo = git.Repo(settings.REPO_DIR)
-    commits = repo.commits(start=sha or 'master',max_count=1)
+    commits = repo.commits(start=sha,max_count=1)
     head = commits[0]
     files = head.tree.items()
     returncontents = ""
     for each in files:
         myblob = each[1]
         filename = myblob.name
+        print "// IN FILES! myblob = ", myblob
+        print "each = ", each
+        print "path = ", path
+
         if filename == path:
             #we have a match
             contents = myblob.data

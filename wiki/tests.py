@@ -328,6 +328,17 @@ class TestViews(django.test.TestCase):
         c = self.client
         response = c.get("/" + filenamevar)
         self.assertTrue(response.context[0].dicts[0]["returncontents"]==filecontent)
+        #test view of file in a folder
+        foldernamevar = "the-folder-name"
+        filenamevaragain = foldernamevar + "/" + "somethingfilesomething.so"
+        filenamevaragain_contents = "contents of a file go here.\nnewline\n\t\ttabtab."
+        addfolder(repo=tmprepo,foldername=foldernamevar,message="added a folder")
+        addfile(repo=tmprepo,filename=filenamevaragain,contents=filenamevaragain_contents,message="added the-folder-name/somethingfilesomething.so")
+        c = self.client
+        response = c.get("/" + filenamevaragain)
+        print "returncontents =============", response.context[0].dicts[0]
+        print os.listdir("/tmp/tmprepo/" + foldernamevar)
+        self.assertTrue(response.context[0].dicts[0]["returncontents"]==filenamevaragain_contents)
         end(tmprepo.git.get_dir)
         pass
     def test_render(self):
