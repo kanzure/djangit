@@ -35,18 +35,27 @@ def rmall(path="/tmp/some/dir/here/"):
                 os.rmdir(os.path.join(root, name))
     return
 
-def begin(path="/tmp/tmprepo"):
+def begin(path="/tmp/tmprepo",barepath="/tmp/bare-repo/"):
+    #FIXME: use git.Git.execute(git.Git(path),["git","init"])
     rmall(path)
     if git.os.path.exists(path): git.os.rmdir(path)
     git.os.mkdir(path)
-    tmprepo = git.Repo.create(path,mkdir=True)
-    tmprepo.git.execute(["git","init"])
+    rmall(barepath)
+    if git.os.path.exists(barepath): git.os.rmdir(barepath)
+    tmprepo = git.Repo.create(barepath,mkdir=True)
+    git.Git.execute(git.Git(path),["git","init"])
+    git.Git.execute(git.Git(path),["git","clone",barepath,path])
     pydjangitwiki.settings.REPO_DIR = path
-    return tmprepo
 
-def end(path="/tmp/tmprepo"):
+    #mkdir tmpdir; cd tmpdir; git init; cd ..; git clone --bare tmpdir/ bare/;
+
+    return (tmprepo,git.Repo(path))
+
+def end(path="/tmp/tmprepo",barepath="/tmp/bare-repo/"):
     rmall(path)
     git.os.rmdir(path)
+    rmall(barepath)
+    git.os.rmdir(barepath)
     return
 
 def find_urls(methodname="index"):
@@ -218,7 +227,7 @@ class TestViews(django.test.TestCase):
     def test_find(self):
         pass
     def test_pathExists(self):
-        tmprepo = begin(path="/tmp/tmprepo")
+        tmprepo = begin(path="/tmp/tmprepo")[1]
         addfile(repo=tmprepo,filename="superfile",contents="file contents, you see",message="added superfile")
         self.assertTrue(pydjangitwiki.wiki.views.pathExists(path="superfile",gitrepo=tmprepo))
         self.assertFalse(pydjangitwiki.wiki.views.pathExists(path="some_file_that_does_not_exist",gitrepo=tmprepo))
@@ -241,7 +250,7 @@ class TestViews(django.test.TestCase):
         end(tmprepo.git.get_dir)
         return
     def test_pathIsFile(self):
-        tmprepo = begin(path="/tmp/tmprepo")
+        tmprepo = begin(path="/tmp/tmprepo")[1]
         print "test_pathIsFile says that tmprepo = ", tmprepo
         addfile(repo=tmprepo,filename="myfilename",contents="these are the contents of the file",message="added myfilename")
         self.assertTrue(pydjangitwiki.wiki.views.pathIsFile(path="myfilename",gitrepo=tmprepo))
@@ -262,7 +271,7 @@ class TestViews(django.test.TestCase):
         return
     def test_index(self):
         #make a repository
-        tmprepo = begin(path="/tmp/tmprepo")
+        tmprepo = begin(path="/tmp/tmprepo")[1]
         
         #add a file
         filenamevar = "the_filename"
