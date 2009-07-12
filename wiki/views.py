@@ -164,7 +164,7 @@ def index(request,path="",sha="",repodir=""):
         repo = git.Repo(settings.REPO_DIR)
     if type(repodir) == git.repo.Repo:
         repo = repodir
-    if type(repodir) == type(""):
+    if type(repodir) == type("") and not (repodir == ""):
         repo = git.Repo(repodir)
     commits = repo.commits(start=sha or 'master', max_count=1, path=path)
     print "commits is: ", commits, "\npath is: ", path
@@ -205,7 +205,7 @@ def index(request,path="",sha="",repodir=""):
             #if string.count("/",path) == 1:
             #    thethingy = myblob.basename
             #else:
-            #    thethingy = path + "/" + myblob.basename
+            thethingy = repo.git.git_dir + "/" + myblob.basename
             print "and now thethingy = ", thethingy
             thecommit = myblob.blame(repo,commit=sha or 'master',file=thethingy)[0][0]
             toinsert['author'] = thecommit.committer.name

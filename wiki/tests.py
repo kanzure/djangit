@@ -283,7 +283,6 @@ class TestViews(django.test.TestCase):
         #test that the file shows up in the index's output
         has_right_filename = False
         for each in response.context[0].dicts[0]["data_for_index"]:
-            print "_________________ each is = ", each
             if each.has_key("filename"):
                 if each["filename"] == filenamevar:
                     has_right_filename = True
