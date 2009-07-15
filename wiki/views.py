@@ -368,19 +368,18 @@ def view(request,path="",sha="master"):
         if not name: name = "" #or "/"
         if path.count("/") == 0:
             #check = cur_tree.__dict__["_contents"].has_key(path)
-            check2 = (cur_tree.keys()).count(path)
-            if check2 == 0: check = False
-            else: check = True
-            checkthing = path #pop_path_rev(copy.copy(path))
+            check2 = (cur_tree.keys()).count(path) #is "path" a file in this tree?
+            if check2 == 0: check = False #path is not a file in this tree
+            else: check = True #ok, it is
+            checkthing = path #in the case of a file, checkthing needs to be the path
         else:
-            check = cur_tree.__dict__["_contents"].has_key(pop_path_rev(copy.copy(path)))
-            checkthing = pop_path_rev(copy.copy(path))
-        if check and not name == checkthing:
-            index = pop_path_rev(copy.copy(path))
+            check = cur_tree.__dict__["_contents"].has_key(pop_path_rev(copy.copy(path))) #
+            checkthing = pop_path_rev(path) #in the case of a folder, checkthing needs to be the remaining path as we travel down the rabbit hole
+        if check and not name == checkthing: #we don't have what we want, and it's a valid key, so let's setup the next step in the while loop
             cur_tree = cur_tree[checkthing]
-            path = pop_path(copy.copy(path))
-            if type(cur_tree) == git.blob.Blob: stop = True
-        elif name == checkthing: stop = True
+            path = pop_path(path) 
+            if type(cur_tree) == git.blob.Blob: stop = True #stop if we have our file (by definition we can't go deeper anyway)
+        elif name == checkthing: stop = True #we have what we want, let's roll.
     if type(cur_tree) == git.blob.Blob:
         returncontents = cur_tree.data
     return django.shortcuts.render_to_response("view.html", locals())
