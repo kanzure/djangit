@@ -30,11 +30,40 @@ def pop_path(path2):
     pieces.reverse()
     return string.join(pieces, "/")
 
+def pop_path_rev(path):
+    '''if path is hello/world then this would return hello'''
+    if path.count("/") == 0: return ""
+    pieces = string.split(path, "/")
+    pieces.reverse()
+    return pieces.pop()
+
+def path_depth(path,depth):
+    '''if path is hello/world/hi and depth=1 then this would return hello, if depth=3, then this would return hi'''
+    pieces = string.split(path, "/")
+    if len(pieces) >= depth: return pieces[depth]
+    else: return "" #error :(
+
+def tree_handler(path_to_tree="",sha="",depth=-1,gitpath=""):
+    '''return everything in this tree.'''
+    if depth == 0: return {}
+    if depth < -1: depth = -1
+    if not gitpath: gitpath = settings.REPO_DIR
+    repo = git.Repo(gitpath)
+    return {} #not implemented yet
+
+#stop = False
+#while not stop:
+#    path_part = pop_path_rev(path)
+#    path = pop_path(path)
+#    if path_part == "": stop = True
+#    else:
+#        #go through the list of items in this level, find the tree with the same name as the path_part
+
 def children(path="",sha="",depth=-1,gitpath=""):
     '''
     find all trees and pages and combine them into a dict
-
-    depth=-1 means infinite depth. 
+ 
+    depth=-1 means infinite depth.
     '''
     if path == "" and gitpath == "": return {}
     if not gitpath: gitpath = settings.REPO_DIR
@@ -63,6 +92,7 @@ def find(path="",sha="",depth=-1):
         #mydict.keys()
         return mytree
     objects = children(path=path,sha=sha,depth=depth)
+    print "FIND objects = ", objects
     if objects.has_key(path):
         return objects[path]
     else:
@@ -148,6 +178,7 @@ def index(request,path="",sha="",repodir=""):
     #show the index for a given path at a given sha id
     #check if the path is a path and not a file
     #if it is a file, show the view method
+    print "DEBUG index"
     pathcheck = pathExists(path=path,sha=sha)
     pathfilecheck = pathIsFile(path=path,sha=sha)
     if pathcheck and pathfilecheck:
@@ -212,6 +243,7 @@ def edit(request, path="", sha=""):
     the "sha" named parameter is for which version of the file to edit
     TODO: proper branching support
     '''
+    print "DEBUG edit"
     if request.method == 'GET':
         #display edit form
         pass
@@ -228,6 +260,7 @@ def archive(request,path="",sha=""):
 
     #git archive --format=zip --prefix=SITE_NAME/ HEAD:THE_DIRECTORY_HERE/ > archive.zip
     '''
+    print "DEBUG archive"
     repo = git.Repo(settings.REPO_DIR)
     mycommit = repo.commit(id=sha or 'master',path=path) #er, test this
     mytree = mycommit.tree()
@@ -246,6 +279,7 @@ def history(request,path="",sha=""):
 
     should work for /history, some-dir/history, and some-file/history
     '''
+    print "DEBUG history"
     #display: id, committer.author, committer.author_email, date, message
     if not pathExists(path=path,sha=sha):
         raise Http404
@@ -270,6 +304,7 @@ def diff(request, path="", sha1="", sha2=""):
 
     to select them, use the history view.
     '''
+    print "DEBUG diff"
     if not pathExists(path=path,sha=sha1) or not pathExists(path=path,sha=sha2):
         #that commit doesn't exist!
         raise Http404
@@ -281,6 +316,7 @@ def upload(request, path=""):
     '''
     upload a file
     '''
+    print "DEBUG upload"
     if request.method == 'GET':
         #display the form
         pass
@@ -295,6 +331,7 @@ def new(request,path="",sha=""):
 
     TODO: implement branching given the "sha" named parameter
     '''
+    print "DEBUG new"
     if request.method == 'GET':
         #show the form
         pass
@@ -309,6 +346,7 @@ def changelog(request,path="",sha=""):
 
     TODO: display the RSS changelog for all changes since sha="sha" (optional)
     '''
+    print "DEBUG changelog"
     return django.shortcuts.render_to_response("changelog.rss", locals())
 
 def view(request,path="",sha="master"):
@@ -329,18 +367,39 @@ def view(request,path="",sha="master"):
     head = commits[0]
     files = head.tree.items()
     returncontents = ""
-    for each in files:
-        myblob = each[1]
-        filename = myblob.name
-        print "// IN FILES! myblob = ", myblob
-        print "each = ", each
-        print "path = ", path
-
-        if filename == path:
-            #we have a match
-            contents = myblob.data
-            returncontents = contents
-            break
+    print "path is: ", path 
+    stop = False
+    cur_tree = head.tree
+    while not stop:
+        check = False
+        name = cur_tree.name
+        if not name: name = "" #or "/"
+        if path.count("/") == 0:
+            print "top of the check: cur_tree is ", cur_tree, "and the name is ", name, "and path is ", path
+            print "__dict__ is: ", cur_tree.__dict__["_contents"]
+            #check = cur_tree.__dict__["_contents"].has_key(path)
+            check2 = (cur_tree.keys()).count(path)
+            if check2 == 0: check = False
+            else: check = True
+            checkthing = path #pop_path_rev(copy.copy(path))
+        else:
+            check = cur_tree.__dict__["_contents"].has_key(pop_path_rev(copy.copy(path)))
+            checkthing = pop_path_rev(copy.copy(path))
+        print "name = ", name, "\n"
+        print "checkthing = ", checkthing, "\n"
+        if check and not name == checkthing:
+            index = pop_path_rev(copy.copy(path))
+            cur_tree = cur_tree[checkthing]
+            print "path was: ", path, "\n"
+            path = pop_path(copy.copy(path))
+            print "path is now: ", path, "\n"
+            if type(cur_tree) == git.blob.Blob: stop = True
+            else: print "is a tree, path is now = ", path, " and cur_tree.name is ", cur_tree.name, "\n"
+        elif name == checkthing: stop = True
+    if type(cur_tree) == git.blob.Blob:
+        print "hahahahah"
+        returncontents = cur_tree.data
+    print "view returncontents = ", returncontents
     return django.shortcuts.render_to_response("view.html", locals())
 
 def render(request, file="", filename=""):
