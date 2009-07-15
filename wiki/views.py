@@ -27,8 +27,12 @@ def pop_path(path):
     if (path2.count("/") == 0): return ""
     pieces = string.split(path2, "/")
     pieces.reverse()
-    pieces.pop()
+    leftover = pieces.pop()
     pieces.reverse()
+    if leftover == "":
+        pieces.reverse()
+        pieces.pop()
+        pieces.reverse()
     return string.join(pieces, "/")
 
 def pop_path_rev(path2):
