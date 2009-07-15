@@ -2,9 +2,9 @@
 import unittest
 import git
 import copy
-import pydjangitwiki.wiki.views
-import pydjangitwiki.urls
-import pydjangitwiki.settings
+import djangit.wiki.views
+import djangit.urls
+import djangit.settings
 import django.test.client
 import django.test
 import os #for rmall
@@ -46,7 +46,7 @@ def begin(path="/tmp/tmprepo",barepath="/tmp/bare-repo/"):
     #barerepo = git.Repo.create(barepath)#mkdr=True)
     git.Git.execute(git.Git(path),["git","init"])
     git.Git.execute(git.Git(path),["git","clone","--bare",path,barepath])
-    pydjangitwiki.settings.REPO_DIR = path
+    djangit.settings.REPO_DIR = path
 
     return git.Repo(path)
 
@@ -61,7 +61,7 @@ def find_urls(methodname="index"):
     '''
     return all RegexURLPattern objects that call a certain method
     '''
-    patterns = pydjangitwiki.urls.urlpatterns
+    patterns = djangit.urls.urlpatterns
     returnlist = []
     for pat in patterns:
         if pat.callback.__name__ == methodname:
@@ -83,7 +83,7 @@ def resolve(regexes=[],validpatterns=[]):
 #class TestURLs(unittest.TestCase):
 class TestURLs:
     def test_index(self):
-        #pydjangitwiki.urls.urlpatterns that should return 'pydjangitwiki.wiki.views.index'
+        #djangit.urls.urlpatterns that should return 'pydjangitwiki.wiki.views.index'
         #note: some of these patterns are handled by 'view' which then calls index()
         #validpatterns = ["/", "", "/folder-name/", "folder-name"]
         validpatterns = [""]
@@ -179,14 +179,14 @@ class TestViews(django.test.TestCase):
     #TODO: test_end
     def test_pop_path(self):
        path = "super/star/destroyer"
-       self.assertTrue(pydjangitwiki.wiki.views.pop_path(path)=="star/destroyer")
+       self.assertTrue(djangit.wiki.views.pop_path(path)=="star/destroyer")
        path ="/super/star/destroyer"
-       #print pydjangitwiki.wiki.views.pop_path(path)
-       self.assertTrue(pydjangitwiki.wiki.views.pop_path(path)=="star/destroyer")
+       #print djangit.wiki.views.pop_path(path)
+       self.assertTrue(djangit.wiki.views.pop_path(path)=="star/destroyer")
        path = "one/two/three/four/"
-       self.assertTrue(pydjangitwiki.wiki.views.pop_path(copy.copy(path))=="two/three/four/")
-       popped = pydjangitwiki.wiki.views.pop_path(copy.copy(path))
-       popped2 = pydjangitwiki.wiki.views.pop_path(copy.copy(popped))
+       self.assertTrue(djangit.wiki.views.pop_path(copy.copy(path))=="two/three/four/")
+       popped = djangit.wiki.views.pop_path(copy.copy(path))
+       popped2 = djangit.wiki.views.pop_path(copy.copy(popped))
        self.assertTrue(popped2=="three/four/")
     def test_children(self):
         #find all tree items and combine them into a dict
@@ -211,7 +211,7 @@ class TestViews(django.test.TestCase):
         tmprepo.execute(["git","add","fancyhat"])
         tmprepo.execute(["git","commit","-m","commited somefile and fancyhat"])
 
-        children = pydjangitwiki.wiki.views.children(gitpath=tmprepo.get_dir)
+        children = djangit.wiki.views.children(gitpath=tmprepo.get_dir)
         self.assertTrue(children.has_key("somefile"))
         self.assertTrue(children.has_key("fancyhat"))
 
@@ -227,43 +227,43 @@ class TestViews(django.test.TestCase):
     def test_pathExists(self):
         tmprepo = begin(path="/tmp/tmprepo")
         addfile(repo=tmprepo,filename="superfile",contents="file contents, you see",message="added superfile")
-        self.assertTrue(pydjangitwiki.wiki.views.pathExists(path="superfile",gitrepo=tmprepo))
-        self.assertFalse(pydjangitwiki.wiki.views.pathExists(path="some_file_that_does_not_exist",gitrepo=tmprepo))
+        self.assertTrue(djangit.wiki.views.pathExists(path="superfile",gitrepo=tmprepo))
+        self.assertFalse(djangit.wiki.views.pathExists(path="some_file_that_does_not_exist",gitrepo=tmprepo))
         #check a non-existant folder
-        self.assertFalse(pydjangitwiki.wiki.views.pathExists(path="folder/to/the/place/",gitrepo=tmprepo))
-        self.assertFalse(pydjangitwiki.wiki.views.pathExists(path="folder/to/the/place",gitrepo=tmprepo))
+        self.assertFalse(djangit.wiki.views.pathExists(path="folder/to/the/place/",gitrepo=tmprepo))
+        self.assertFalse(djangit.wiki.views.pathExists(path="folder/to/the/place",gitrepo=tmprepo))
         #make a folder
         blah = addfolder(repo=tmprepo,foldername="folder")
         #make a file in the folder
         addfile(repo=tmprepo,filename="folder/somefile",contents="contents of the file go here",message="added a file")
-        children = pydjangitwiki.wiki.views.children(gitpath=tmprepo.git.get_dir)
+        children = djangit.wiki.views.children(gitpath=tmprepo.git.get_dir)
         #test the folder
-        self.assertTrue(pydjangitwiki.wiki.views.pathExists(path="folder",gitrepo=tmprepo))
-        #self.assertTrue(pydjangitwiki.wiki.views.pathExists(path="folder/",gitrepo=tmprepo)) #should this work?
-        #self.assertTrue(pydjangitwiki.wiki.views.pathExists(path="/folder",gitrepo=tmprepo))
-        #self.assertTrue(pydjangitwiki.wiki.views.pathExists(path="/folder/",gitrepo=tmprepo))
+        self.assertTrue(djangit.wiki.views.pathExists(path="folder",gitrepo=tmprepo))
+        #self.assertTrue(djangit.wiki.views.pathExists(path="folder/",gitrepo=tmprepo)) #should this work?
+        #self.assertTrue(djangit.wiki.views.pathExists(path="/folder",gitrepo=tmprepo))
+        #self.assertTrue(djangit.wiki.views.pathExists(path="/folder/",gitrepo=tmprepo))
         #make a file in the folder
         #test the file
-        self.assertTrue(pydjangitwiki.wiki.views.pathExists(path="folder/somefile",gitrepo=tmprepo))
+        self.assertTrue(djangit.wiki.views.pathExists(path="folder/somefile",gitrepo=tmprepo))
         end(tmprepo.git.get_dir)
         return
     def test_pathIsFile(self):
         tmprepo = begin(path="/tmp/tmprepo")
         addfile(repo=tmprepo,filename="myfilename",contents="these are the contents of the file",message="added myfilename")
-        self.assertTrue(pydjangitwiki.wiki.views.pathIsFile(path="myfilename",gitrepo=tmprepo))
-        self.assertFalse(pydjangitwiki.wiki.views.pathIsFile(path="/",gitrepo=tmprepo))
-        self.assertFalse(pydjangitwiki.wiki.views.pathIsFile(path="some_file_that_does_not_exist",gitrepo=tmprepo))
+        self.assertTrue(djangit.wiki.views.pathIsFile(path="myfilename",gitrepo=tmprepo))
+        self.assertFalse(djangit.wiki.views.pathIsFile(path="/",gitrepo=tmprepo))
+        self.assertFalse(djangit.wiki.views.pathIsFile(path="some_file_that_does_not_exist",gitrepo=tmprepo))
         #make a folder, add a file.
         addfolder(repo=tmprepo,foldername="foldername",message="added a folder, behold!")
         #test the folder
-        self.assertFalse(pydjangitwiki.wiki.views.pathIsFile(path="foldername/",gitrepo=tmprepo))
-        self.assertFalse(pydjangitwiki.wiki.views.pathIsFile(path="foldername",gitrepo=tmprepo))
+        self.assertFalse(djangit.wiki.views.pathIsFile(path="foldername/",gitrepo=tmprepo))
+        self.assertFalse(djangit.wiki.views.pathIsFile(path="foldername",gitrepo=tmprepo))
         #add a file
         addfile(repo=tmprepo,filename="foldername/some-super-file",contents="well, here goes nothing",message="trying subdir adding file")
         #test the file
-        self.assertTrue(pydjangitwiki.wiki.views.pathIsFile(path="foldername/some-super-file",gitrepo=tmprepo))
+        self.assertTrue(djangit.wiki.views.pathIsFile(path="foldername/some-super-file",gitrepo=tmprepo))
         #what about another file in the dir?
-        self.assertFalse(pydjangitwiki.wiki.views.pathIsFile(path="foldername/other_file_here",gitrepo=tmprepo))
+        self.assertFalse(djangit.wiki.views.pathIsFile(path="foldername/other_file_here",gitrepo=tmprepo))
         end(tmprepo.git.get_dir)
         return
     def test_index(self):
@@ -275,7 +275,7 @@ class TestViews(django.test.TestCase):
         addfile(repo=tmprepo,filename=filenamevar,contents="this is the content of the file",message="added the_filename")
         #test that the dict worked
         c = self.client
-        #FIXME: c.get() calls pydjangitwiki.wiki.index() but it ignores pydjangitwiki.settings.REPO_DIR modifications made in begin()
+        #FIXME: c.get() calls djangit.wiki.index() but it ignores pydjangitwiki.settings.REPO_DIR modifications made in begin()
         response = c.get("/")
         self.assertTrue(response.context[0].dicts[0].keys().__contains__("data_for_index"))
         #test that the file shows up in the index's output
@@ -348,5 +348,5 @@ class TestViews(django.test.TestCase):
 
 if __name__ == '__main__':
     django.test.utils.setup_test_environment()
-    #django.conf.settings.configure(default_settings=pydjangitwiki.settings,REPO_DIR="/tmp/tmprepo")
+    #django.conf.settings.configure(default_settings=djangit.settings,REPO_DIR="/tmp/tmprepo")
     unittest.main()

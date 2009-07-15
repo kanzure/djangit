@@ -1,4 +1,4 @@
-# Django settings for pydjangitwiki project.
+# Django settings for djangit project.
 import os.path
 
 DEBUG = True
@@ -69,14 +69,14 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 
-ROOT_URLCONF = 'pydjangitwiki.urls'
+ROOT_URLCONF = 'djangit.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     #os.path.join(os.path.realpath(os.path.curdir), 'templates'),
-    "/home/kanzure/code/pydjangitwiki/templates/",
+    "/home/kanzure/code/djangit/templates/",
 )
 
 INSTALLED_APPS = (
@@ -85,5 +85,5 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.admin', #admin
-    'pydjangitwiki.wiki', #wiki
+    'djangit.wiki', #wiki
 )

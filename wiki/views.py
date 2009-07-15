@@ -356,6 +356,6 @@ def render(request, file="", filename=""):
         elif (file.rfind("js") > 0):
             return django.shortcuts.render_to_response(file,locals(),mimetype="text/js")
     elif not filename == "":
-        fp = open(os.path.join(os.path.realpath(os.path.curdir),("templates/pydjangitwiki-static/static/images/%s.png" % (filename))))
+        fp = open(os.path.join(os.path.realpath(os.path.curdir),("templates/djangit-static/static/images/%s.png" % (filename))))
         blah = fp.read()
         return HttpResponse(blah,mimetype="image/png")
