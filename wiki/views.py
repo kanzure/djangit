@@ -350,8 +350,6 @@ def view(request,path="",sha="master"):
     note: if it's a folder, return the index view.
     '''
     #check if the path is a path or if the path is a file
-    #if the path is a file, continue
-    #otherwise, return the index view
     if path:
         if not pathIsFile(path=path,sha=sha):
             return index(request,path=path,sha=sha)
