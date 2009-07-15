@@ -19,10 +19,11 @@ import copy
 # TODO: download a single page (not in a compressed archive)
 # django request objects: http://docs.djangoproject.com/en/dev/ref/request-response/)
 
-def pop_path(path2):
+def pop_path(path):
     '''
     if path is super/star/destroyer, then pop_path will return star/destroyer
     '''
+    path2 = copy.copy(path)
     if (path2.count("/") == 0): return ""
     pieces = string.split(path2, "/")
     pieces.reverse()
@@ -30,8 +31,9 @@ def pop_path(path2):
     pieces.reverse()
     return string.join(pieces, "/")
 
-def pop_path_rev(path):
+def pop_path_rev(path2):
     '''if path is hello/world then this would return hello'''
+    path = copy.copy(path2)
     if path.count("/") == 0: return ""
     pieces = string.split(path, "/")
     pieces.reverse()
