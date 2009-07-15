@@ -335,6 +335,7 @@ class TestViews(django.test.TestCase):
         addfolder(repo=tmprepo,foldername=foldernamevar,message="added a folder")
         addfile(repo=tmprepo,filename=filenamevaragain,contents=filenamevaragain_contents,message="added the-folder-name/somethingfilesomething.so")
         c = self.client
+        #TODO: figure out whether or not this gets to the right view
         response = c.get("/" + filenamevaragain)
         print "returncontents =============", response.context[0].dicts[0]
         print os.listdir("/tmp/tmprepo/" + foldernamevar)
