@@ -337,7 +337,6 @@ class TestViews(django.test.TestCase):
         c = self.client
         #TODO: figure out whether or not this gets to the right view
         response = c.get("/" + filenamevaragain)
-        print "returncontents =============", response.context[0].dicts[0]
         print os.listdir("/tmp/tmprepo/" + foldernamevar)
         self.assertTrue(response.context[0].dicts[0]["returncontents"]==filenamevaragain_contents)
         end(tmprepo.git.get_dir)
