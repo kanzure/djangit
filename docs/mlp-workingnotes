@@ -1,0 +1,10 @@
+Notes for egg-packing:
+
+- add dependency on git module
+- if REPO_DIR specified in settings.py is not already a repo, init it properly (w/default page as content?)
+
+Current questions:
+
+- is wiki interface RESTful? ie can i query it for an item w/a particular id?
+
+Answered questions:
