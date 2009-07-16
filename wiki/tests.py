@@ -86,6 +86,7 @@ class TestURLs:
         #djangit.urls.urlpatterns that should return 'pydjangitwiki.wiki.views.index'
         #note: some of these patterns are handled by 'view' which then calls index()
         #validpatterns = ["/", "", "/folder-name/", "folder-name"]
+        #TODO: make a repo, make some files, and make the patterns resolve correctly?
         validpatterns = [""]
         regexes = find_urls(methodname="index")
         testresults = resolve(regexes=regexes,validpatterns=validpatterns)
