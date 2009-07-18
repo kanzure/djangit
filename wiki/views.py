@@ -115,9 +115,15 @@ def pathExists(path="",sha="",gitrepo=""):
     if type(gitrepo) == git.repo.Repo:
         repo = gitrepo
     else:
-        repo = git.Repo(settings.REPO_DIR)
+	try:
+            repo = git.Repo(settings.REPO_DIR)
+	except git.InvalidGitRepositoryError:
+	    repo = git.Repo.create(settings.REPO_DIR)
     tree = repo.tree()
-    mykeys = tree.keys()
+    try:
+	mykeys = tree.keys()
+    except git.GitCommandError as gce:
+	print gce, " line 126"
     if string.count(path, "/") > 0:
         pieces = string.split(path, "/")
         for each in pieces:
@@ -150,7 +156,10 @@ def pathIsFile(path="",sha="",gitrepo=""):
     else:
         repo = git.Repo(gitrepo)
     tree = repo.tree()
-    mykeys = tree.keys() #or else it doesn't work wtf
+    try:
+    	mykeys = tree.keys() #or else it doesn't work wtf
+    except git.GitCommandError as gce:
+	print gce, " line 162"
     if (string.count(path, "/") > 0):
         pieces = string.split(path, "/")
         for each in pieces:
@@ -196,7 +205,10 @@ def index(request,path="",sha="",repodir=""):
         repo = repodir
     if type(repodir) == type("") and not (repodir == ""):
         repo = git.Repo(repodir)
-    commits = repo.commits(start=sha or 'master', max_count=1, path=path)
+    try:
+    	commits = repo.commits(start=sha or 'master', max_count=1, path=path)
+    except git.GitCommandError:
+	commits = []
     if len(commits) > 0: head = commits[0]
     else: raise Http404 #oh boy
     #if sha == "" or not sha: head = commits[0]
@@ -232,13 +244,14 @@ def index(request,path="",sha="",repodir=""):
             #else:
             thethingy = repo.git.git_dir + "/" + myblob.basename
             thecommit = myblob.blame(repo,commit=sha or 'master',file=thethingy)[0][0]
-            toinsert['author'] = thecommit.committer.name
-            toinsert['author_email'] = thecommit.committer.email
-            toinsert['id'] = head.id #thecommit.id
-            toinsert['date'] = thecommit.authored_date
-            toinsert['message'] = thecommit.message
-            toinsert['filename'] = myblob.basename
-            data_for_index.append(toinsert)
+	    if (thecommit):
+            	toinsert['author'] = thecommit.committer.name
+            	toinsert['author_email'] = thecommit.committer.email
+            	toinsert['id'] = head.id #thecommit.id
+            	toinsert['date'] = thecommit.authored_date
+            	toinsert['message'] = thecommit.message
+            	toinsert['filename'] = myblob.basename
+            	data_for_index.append(toinsert)
     return django.shortcuts.render_to_response("index.html", locals())
 
 def edit(request, path="", sha=""):
