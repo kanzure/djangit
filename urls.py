@@ -7,7 +7,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Example:
-    # (r'^djangit/', include('pydjangitwiki.foo.urls')),
+    # (r'^djangit/', include('djangit.foo.urls')),
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
@@ -25,16 +25,16 @@ urlpatterns = patterns('',
     #login/signup stuff not included here
     #also user profile stuff not included here
     #do CSS/JS first
-    (r'^djangit-static/static/images/(?P<filename>[A-Za-z]*)\.png$', 'pydjangitwiki.wiki.views.render', {'file':""}),
-    (r'^djangit-static/screen.css$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/screen.css"}),
-    (r'^djangit-static/print.css$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/print.css"}),
-    (r'^djangit-static/reset.css$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/reset.css"}),
-    (r'^djangit-static/static/highlight.css$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/static/highlight.css"}),
-    (r'^djangit-static/static/script/jquery/jquery-1.3.1.js$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/static/script/jquery/jquery-1.3.1.js"}),
-    (r'^djangit-static/static/script/jquery/ui.core.js$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/static/script/jquery/ui.core.js"}),
-    (r'^djangit-static/static/script/jquery/ui.tabs.js$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/static/script/jquery/ui.tabs.js"}),
-    (r'^djangit-static/static/script/jquery/tablesorter.js$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/static/script/jquery/tablesorter.js"}),
-    (r'^djangit-static/static/script/app.js$', 'pydjangitwiki.wiki.views.render', {'file':"pydjangitwiki-static/static/script/app.js"}),
+    (r'^djangit-static/static/images/(?P<filename>[A-Za-z]*)\.png$', 'djangit.wiki.views.render', {'file':""}),
+    (r'^djangit-static/screen.css$', 'djangit.wiki.views.render', {'file':"djangit-static/screen.css"}),
+    (r'^djangit-static/print.css$', 'djangit.wiki.views.render', {'file':"djangit-static/print.css"}),
+    (r'^djangit-static/reset.css$', 'djangit.wiki.views.render', {'file':"djangit-static/reset.css"}),
+    (r'^djangit-static/static/highlight.css$', 'djangit.wiki.views.render', {'file':"djangit-static/static/highlight.css"}),
+    (r'^djangit-static/static/script/jquery/jquery-1.3.1.js$', 'djangit.wiki.views.render', {'file':"djangit-static/static/script/jquery/jquery-1.3.1.js"}),
+    (r'^djangit-static/static/script/jquery/ui.core.js$', 'djangit.wiki.views.render', {'file':"djangit-static/static/script/jquery/ui.core.js"}),
+    (r'^djangit-static/static/script/jquery/ui.tabs.js$', 'djangit.wiki.views.render', {'file':"djangit-static/static/script/jquery/ui.tabs.js"}),
+    (r'^djangit-static/static/script/jquery/tablesorter.js$', 'djangit.wiki.views.render', {'file':"djangit-static/static/script/jquery/tablesorter.js"}),
+    (r'^djangit-static/static/script/app.js$', 'djangit.wiki.views.render', {'file':"djangit-static/static/script/app.js"}),
     (r'^edit/$', 'djangit.wiki.views.edit'),
     (r'^root$', 'djangit.wiki.views.index'),
     (r'^$', 'djangit.wiki.views.index'),
