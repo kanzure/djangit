@@ -98,7 +98,6 @@ def find(path="",sha="",depth=-1):
         #mydict.keys()
         return mytree
     objects = children(path=path,sha=sha,depth=depth)
-    print "FIND objects = ", objects
     if objects.has_key(path):
         return objects[path]
     else:
@@ -243,6 +242,7 @@ def index(request,path="",sha="",repodir=""):
             #    thethingy = myblob.basename
             #else:
             thethingy = repo.git.git_dir + "/" + myblob.basename
+            thethingy = repo.git.git_dir + "/" + path + "/" +  myblob.basename
             thecommit = myblob.blame(repo,commit=sha or 'master',file=thethingy)[0][0]
 	    if (thecommit):
             	toinsert['author'] = thecommit.committer.name
