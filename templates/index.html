@@ -26,8 +26,8 @@
 <td></td>
 <td></td>
 <td>
-<a href="/icons/archive" title="Archive"><img src="/djangit-static/static/images/archive.png" alt="Archive"/></a>
-<a href="/icons/history" title="History"><img src="/djangit-static/static/images/history.png" alt="History"/></a>
+<a href="/{{ folder.name }}/archive" title="Archive"><img src="/djangit-static/static/images/archive.png" alt="Archive"/></a>
+<a href="/{{ folder.name }}/history" title="History"><img src="/djangit-static/static/images/history.png" alt="History"/></a>
 </td>
 </tr>
 
@@ -42,8 +42,8 @@
 <td>{{ file.message }}</td>
 
 <td>
-<a href="/icons/archive" title="Archive"><img src="/djangit-static/static/images/archive.png" alt="Archive"/></a>
-<a href="/icons/history" title="History"><img src="/djangit-static/static/images/history.png" alt="History"/></a>
+<a href="/{{ file.filename }}/archive" title="Archive"><img src="/djangit-static/static/images/archive.png" alt="Archive"/></a>
+<a href="/{{ file.filename }}/history" title="History"><img src="/djangit-static/static/images/history.png" alt="History"/></a>
 </td>
 </tr>
 
