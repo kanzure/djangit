@@ -6,10 +6,35 @@ History of {{ path }} on {{ SITE_NAME }}
 history page<br /><br />
 
 {% block content %}
-sha = {{ sha }}
-<br />
-path = {{ path }}
 
-{{ history_data }}
+<h1>History</h1>
+<table class="tree zebra">
+<thead>
+<tr>
+<th>Commit-Id</th>
+<th>Last modified</th>
+<th>Author</th>
 
-{% endblock %}
+<th>Message</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for commit in history_data %}
+
+<tr>
+<td class="link"><a style="padding-left: 0px" href="#" title="Open">{{ commit.commit_id }}/</a></td>
+<td><span class="date seconds_1246568822">{{ commit.date }}</span></td>
+<td>{{ commit.author }}</td>
+<td>{{ commit.message }}</td>
+<td>&nbsp;</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+</table>
+
+{% endblock content %}
