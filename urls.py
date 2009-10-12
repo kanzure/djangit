@@ -40,13 +40,13 @@ urlpatterns = patterns('',
     (r'^$', 'djangit.wiki.views.index'),
     #(r'^/([^/?&#.]+)\.css$', # /:style.css
     (r'^commit/([A-Fa-f0-9]{5,40})$', 'djangit.wiki.views.index'), # commit/:sha
+    (r'^new$', 'djangit.wiki.views.new'), # /new
+    (r'^upload$', 'djangit.wiki.views.upload'), # /upload
     (r'^/?([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)?/archive$', 'djangit.wiki.views.archive'), # /?:path?/archive #make zip file
     (r'^/?([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)?/history$', 'djangit.wiki.views.history'), # /?:path?/history
     (r'^/?([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)?/diff$', 'djangit.wiki.views.diff'), # /?:path?/diff
     (r'^([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)/edit$', 'djangit.wiki.views.edit'), # /:path/edit
     (r'^/([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)/upload$', 'djangit.wiki.views.upload'), # /:path/upload
-    (r'^new$', 'djangit.wiki.views.new'), # /new
-    (r'^upload$', 'djangit.wiki.views.upload'), # /upload
     (r'^([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)/new$', 'djangit.wiki.views.new'), # /:path/new
     (r'^([\w:.+\-_\/](?:[\w:.+\-_\/ ]*[\w.+\-_\/])?)/upload$', 'djangit.wiki.views.upload'), # /:path/upload
     (r'^([A-Fa-f0-9]{5,40})$', 'djangit.wiki.views.index'), # /:sha

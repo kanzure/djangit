@@ -7,7 +7,7 @@ import django.shortcuts #render_to_response
 import git
 import os.path
 from django.conf import settings
-import string #for pathIsFile()
+import string #for path_is_file()
 import copy
 
 #def about_pages(request, page):
@@ -17,7 +17,7 @@ import copy
 #        raise Http404()
 
 # TODO: download a single page (not in a compressed archive)
-# django request objects: http://docs.djangoproject.com/en/dev/ref/request-response/)
+# django request objects: http://docs.djangoproject.com/en/dev/ref/request-response/
 
 def pop_path(path):
     '''
@@ -104,7 +104,7 @@ def find(path="",sha="",depth=-1):
         return False #path not found
     pass
 
-def pathExists(path="",sha="",gitrepo=""):
+def path_exists(path="",sha="",gitrepo=""):
     '''
     return True if the path exists
     return False if the path does not exist
@@ -120,28 +120,28 @@ def pathExists(path="",sha="",gitrepo=""):
 	    repo = git.Repo.create(settings.REPO_DIR)
     tree = repo.tree()
     try:
-	mykeys = tree.keys()
-    except git.GitCommandError as gce:
-	print gce, " line 126"
+	    mykeys = tree.keys()
+    except git.GitCommandError, gce:
+    	print gce, " line 126"
     if string.count(path, "/") > 0:
-        pieces = string.split(path, "/")
-        for each in pieces:
-            mykeys = tree.keys()
-            somedict = tree.__dict__["_contents"]
-            if not somedict.has_key(each):
+       pieces = string.split(path, "/")
+       for each in pieces:
+             mykeys = tree.keys()
+             somedict = tree.__dict__["_contents"]
+             if not somedict.has_key(each):
                 return False
-            if type(somedict[each]) == git.tree.Tree:
+             if type(somedict[each]) == git.tree.Tree:
                 tree = somedict[each]
-        return True #it exists
+       return True #it exists
     else:
-        #check if it exists in /
-        somedict = tree.__dict__["_contents"]
-        if somedict.has_key(path):
-            return True #has it
-        else:
-            return False #not there
+       #check if it exists in /
+       somedict = tree.__dict__["_contents"]
+       if somedict.has_key(path):
+             return True #has it
+       else:
+             return False #not there
 
-def pathIsFile(path="",sha="",gitrepo=""):
+def path_is_file(path="",sha="",gitrepo=""):
     '''
     return True if the path is a file
     return False if the path is a path (folder or directory)
@@ -157,8 +157,8 @@ def pathIsFile(path="",sha="",gitrepo=""):
     tree = repo.tree()
     try:
     	mykeys = tree.keys() #or else it doesn't work wtf
-    except git.GitCommandError as gce:
-	print gce, " line 162"
+    except git.GitCommandError, gce:
+    	print gce, " line 162"
     if (string.count(path, "/") > 0):
         pieces = string.split(path, "/")
         for each in pieces:
@@ -192,11 +192,13 @@ def index(request,path="",sha="",repodir=""):
     #show the index for a given path at a given sha id
     #check if the path is a path and not a file
     #if it is a file, show the view method
-    pathcheck = pathExists(path=path,sha=sha)
-    pathfilecheck = pathIsFile(path=path,sha=sha)
+    pathcheck = path_exists(path=path,sha=sha)
+    pathfilecheck = path_is_file(path=path,sha=sha)
+    assert False, "hello this is the index: pathcheck (%s), pathfilecheck (%s)" % (pathcheck, pathfilecheck)
     if pathcheck and pathfilecheck:
         return view(request,path=path,sha=sha)
     if not pathcheck and path:
+        assert False, "hoooooooooo; pathcheck is: %s and pathfilecheck is: %s" % (pathcheck, pathfilecheck)
         return new(request,path=path)
     if repodir == "":
         repo = git.Repo(settings.REPO_DIR)
@@ -219,10 +221,15 @@ def index(request,path="",sha="",repodir=""):
     #            print "the commit object is ", commit
     #print "sha is ", head.id, " and sha was: ", sha
     
-    #FIXME: use find() and pathExists() and children() and pathIsFile() here
+    #FIXME: use find() and path_exists() and children() and path_is_file() here
     #files = head.tree.items()
+    #2009-10-11: not sure what this does
     files = find(path=path,sha=sha,depth=1)
-    if len(files) == 1 and not (type(files) == type([])): files = files.items() #oopsies
+    #if len(files) == 1 and not (type(files) == type([])): files = files.items() #oopsies
+    if hasattr(files, "items"):
+        files = files.items()
+    else:
+        files = [files]
 
     data_for_index = [] #start with nothing
     folders_for_index = []
@@ -296,7 +303,7 @@ def history(request,path="",sha=""):
     should work for /history, some-dir/history, and some-file/history
     '''
     #display: id, committer.author, committer.author_email, date, message
-    if not pathExists(path=path,sha=sha):
+    if not path_exists(path=path,sha=sha):
         raise Http404
     #see: http://adl.serveftp.org:4567/history
     #see: adl /var/www/git-wiki/lib/wiki/resource.rb
@@ -319,7 +326,7 @@ def diff(request, path="", sha1="", sha2=""):
 
     to select them, use the history view.
     '''
-    if not pathExists(path=path,sha=sha1) or not pathExists(path=path,sha=sha2):
+    if not path_exists(path=path,sha=sha1) or not path_exists(path=path,sha=sha2):
         #that commit doesn't exist!
         raise Http404
     repo = git.Repo(settings.REPO_DIR)
@@ -344,8 +351,11 @@ def new(request,path="",sha=""):
 
     TODO: implement branching given the "sha" named parameter
     '''
+    message = "no message"
     if request.method == 'GET':
         #show the form
+        message = "this is the GET message"
+        assert False, message
         pass
     elif request.method == 'POST':
         #add content to repo
@@ -368,7 +378,7 @@ def view(request,path="",sha="master"):
     '''
     #check if the path is a path or if the path is a file
     if path:
-        if not pathIsFile(path=path,sha=sha):
+        if not path_is_file(path=path,sha=sha):
             return index(request,path=path,sha=sha)
     repo = git.Repo(settings.REPO_DIR)
     commits = repo.commits(start=sha,max_count=1)
