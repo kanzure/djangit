@@ -1,0 +1,186 @@
+
+======== structure of the git repository "example.git": ========
+pretend you have a working git repo with these files:
+
+    readme
+    index
+    data.yaml
+    docs/
+        readme
+        architecture
+        todo
+        license
+        contrib
+        hacking
+        proposals/
+            readme
+            user_auth.txt
+
+======== reserved words ========
+no file or directory may use any of these as a name:
+
+- new
+- edit
+- delete
+- source
+- history
+- archive
+
+no file/directory may contain the / character ('/')
+
+no file/dir in the main/root directory may be called:
+- login
+- logout
+
+======== rules for parsing a url ========
+
+how to find the command in the url:
+    - look for a reserved word farthest to the left
+    - ignore everything to the right of that command (except variables)
+
+======== urlconf resolution plan ========
+
+example.com/
+example.com/docs
+example.com/docs/
+example.com/e19a9220403c381b1c86c23fc3532f1a7b7a18e1
+example.com/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/
+example.com/docs/e19a9220403c381b1c86c23fc3532f1a7b7a18e1
+example.com/docs/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/
+example.com/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/crap
+example.com/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/crap/
+example.com/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/crap/goes/here
+example.com/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/crap/edit
+ ^ directory listing of a folder
+ ^ if the directory has a file called "index" then that file will be the one used
+ ^ please respect the SHA
+
+example.com/readme
+example.com/readme/
+example.com/readme/e19a9220403c381b1c86c23fc3532f1a7b7a18e1
+example.com/readme/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/
+example.com/readme/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/nonsense
+example.com/readme/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/nonsense/
+ ^ view "readme" file contents
+ ^ show a particular version when given an SHA
+
+example.com/readme/source
+example.com/readme/source/
+example.com/readme/source/other
+example.com/readme/source/other/
+example.com/readme/source/other/stuff
+example.com/readme/source/other/stuff/
+example.com/readme/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/source
+example.com/readme/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/source/
+example.com/readme/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/source/other
+example.com/readme/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/source/other/
+example.com/readme/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/source/new/edit/history
+example.com/source
+example.com/source/
+example.com/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/source
+example.com/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/source/
+example.com/index/source
+example.com/index/source/
+example.com/index/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/source
+example.com/index/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/source/
+example.com/source/crap/goes/here
+example.com/source/crap
+example.com/source/textpuke/new
+ ^ the source of the page (without markup parser)
+ ^ (possibly the version given by the commit SHA)
+ ^ source of the main index page (ignoring crap after source/)
+ ^ if there is an "index" file then display its source
+ ^ otherwise allow a new page (index) to be created
+ ^ if an SHA is given, warn the user that he will be creating a new branch (?) from the specified commit
+
+example.com/readme/edit
+example.com/readme/edit/
+example.com/readme/edit/other/stuff/here
+example.com/readme/edit/other/stuff/here/
+example.com/readme/edit/new/
+example.com/readme/edit/blah/blah2/new/
+example.com/readme/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/edit
+example.com/readme/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/edit/
+example.com/readme/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/edit/new
+example.com/readme/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/edit/new/
+example.com/readme/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/edit/other/stuff/here
+example.com/readme/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/edit/other/stuff/here/
+example.com/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/edit
+example.com/docs/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/edit
+example.com/docs/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/edit/
+example.com/docs/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/edit/new
+example.com/docs/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/edit/blah/
+ ^ an edit form for the "readme" file (or an index file if instead of "readme" it's some directory)
+ ^ (possibly the version given by the commit number)
+
+example.com/readme/history
+example.com/readme/history/
+example.com/readme/history/blah
+example.com/readme/history/ignorable/
+example.com/readme/history/new
+example.com/readme/history/new/edit
+example.com/readme/history/new/edit/
+ ^ a history of the 'readme' file
+
+example.com/readme/new
+example.com/readme/new/
+example.com/readme/new/ignorable
+example.com/readme/new/ignorable/
+example.com/readme/new/ignorable/edit
+example.com/readme/new/new
+example.com/readme/new/ignore/this/stuff/here
+ ^ in this case it redirects to the /readme/edit page
+
+example.com/some_new_file/new
+example.com/some_new_file/new/
+example.com/some_new_file/e19a9220403c381b1c86c23fc3532f1a7b7a18e1
+example.com/some_new_file/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/new
+example.com/some_new_file/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/new/
+example.com/some_new_file/new/other/stuff/here
+example.com/some_new_file/new/other/stuff/here/
+example.com/some_new_file/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/new/edit
+example.com/some_new_file/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/new/history/crap/blah
+example.com/docs/some_new_file
+example.com/docs/some_new_file/
+example.com/docs/some_new_file/new
+example.com/docs/some_new_file/new/
+example.com/docs/some_new_file/e19a9220403c381b1c86c23fc3532f1a7b7a18e1
+example.com/docs/some_new_file/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/
+example.com/docs/some_new_file/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/new
+example.com/docs/some_new_file/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/new/
+example.com/new_dir/some_new_file
+example.com/new_dir/some_new_file/new
+example.com/new_dir/some_new_file/new/
+example.com/new_dir/
+example.com/new_dir//
+example.com/new_dir//new
+example.com/new_dir//new/
+example.com/new_dir//new/crap
+example.com/new_dir//new/crap/
+example.com/new_dir//new/edit
+example.com/new_dir//new/edit/
+example.com/new_dir//some_new_file
+example.com/new_dir//some_new_file/
+example.com/new_dir//some_new_file/new
+example.com/new_dir//some_new_file/new/
+example.com/new_dir/some_new_file/e19a9220403c381b1c86c23fc3532f1a7b7a18e1 #in this case you use the SHA to mean the highest dir that exists at that SHA
+example.com/new_dir//e19a9220403c381b1c86c23fc3532f1a7b7a18e1
+example.com/new_dir//e19a9220403c381b1c86c23fc3532f1a7b7a18e1/
+example.com/new_dir//e19a9220403c381b1c86c23fc3532f1a7b7a18e1/new
+example.com/new_dir//e19a9220403c381b1c86c23fc3532f1a7b7a18e1/new/
+example.com/new_dir//some_new_file/
+example.com/new_dir//some_new_file/e19a9220403c381b1c86c23fc3532f1a7b7a18e1
+ ^ make a new page called "some_new_file" (assume there is no file with that name in the scenario)
+ ^ make a directory if necessary
+ ^ "new_dir/" makes a new file called "new_dir"
+ ^ .. and "new_dir//" makes a new directory called "new_dir" (and lets you edit an index file for that directory)
+ ^ respect the SHA
+ ^ if an SHA is given, and the file was there, then edit that file - warn the user that a branch will be created
+ ^ if an SHA is given, and the file was not there, make a new page and warn that the user will be making a branch
+ ^ if an SHA is not given, and the file already exists, then you shouldn't be here anyway
+
+example.com/e19a9220403c381b1c86c23fc3532f1a7b7a18e1/edit
+ ^ edit the index page at that commit
+ ^ note: if there is no index page for the main directory, then it should make an index page and branch from that commit of the repo
+
+
