@@ -19,6 +19,14 @@ import copy
 # TODO: download a single page (not in a compressed archive)
 # django request objects: http://docs.djangoproject.com/en/dev/ref/request-response/
 
+def strip_trailing_slashes(path):
+    try:
+        if path[-1] == "/":
+            return path[:-1]
+        else: return path
+    except IndexError, err:
+        return path
+
 def pop_path(path):
     '''
     if path is super/star/destroyer, then pop_path will return star/destroyer
@@ -123,7 +131,12 @@ def path_exists(path="",sha="",gitrepo=""):
 	    mykeys = tree.keys()
     except git.GitCommandError, gce:
     	print gce, " line 126"
-    if string.count(path, "/") > 0:
+    try:
+        if path[-1]=="/": is_last_char = True
+        else: is_last_char = False
+    except IndexError, err:
+        is_last_char = False
+    if string.count(path, "/") > 0 and not is_last_char:
        pieces = string.split(path, "/")
        for each in pieces:
              mykeys = tree.keys()
@@ -134,6 +147,10 @@ def path_exists(path="",sha="",gitrepo=""):
                 tree = somedict[each]
        return True #it exists
     else:
+       #strip the slashes from the path
+       #(if a dir name is "blah", then "blah/" will not match "blah" on well behaving filesystems)
+       if is_last_char: path = path[:-1]
+
        #check if it exists in /
        somedict = tree.__dict__["_contents"]
        if somedict.has_key(path):
@@ -194,11 +211,9 @@ def index(request,path="",sha="",repodir=""):
     #if it is a file, show the view method
     pathcheck = path_exists(path=path,sha=sha)
     pathfilecheck = path_is_file(path=path,sha=sha)
-    assert False, "hello this is the index: pathcheck (%s), pathfilecheck (%s)" % (pathcheck, pathfilecheck)
     if pathcheck and pathfilecheck:
         return view(request,path=path,sha=sha)
     if not pathcheck and path:
-        assert False, "hoooooooooo; pathcheck is: %s and pathfilecheck is: %s" % (pathcheck, pathfilecheck)
         return new(request,path=path)
     if repodir == "":
         repo = git.Repo(settings.REPO_DIR)
@@ -209,7 +224,7 @@ def index(request,path="",sha="",repodir=""):
     try:
     	commits = repo.commits(start=sha or 'master', max_count=1, path=path)
     except git.GitCommandError:
-	commits = []
+    	commits = []
     if len(commits) > 0: head = commits[0]
     else: raise Http404 #oh boy
     #if sha == "" or not sha: head = commits[0]
@@ -223,24 +238,21 @@ def index(request,path="",sha="",repodir=""):
     
     #FIXME: use find() and path_exists() and children() and path_is_file() here
     #files = head.tree.items()
-    #2009-10-11: not sure what this does
-    files = find(path=path,sha=sha,depth=1)
-    #if len(files) == 1 and not (type(files) == type([])): files = files.items() #oopsies
-    if hasattr(files, "items"):
-        files = files.items()
-    else:
-        files = [files]
+    files = find(path=strip_trailing_slashes(path),sha=sha,depth=1)
+    if len(files) == 1 and not (type(files) == type([])): files = files.items() #oopsies
 
     data_for_index = [] #start with nothing
     folders_for_index = []
     for each in files:
         toinsert = {}
+        thethingy = None
         myblob = each[1]
         if type(myblob) == git.tree.Tree:
             mytree = myblob
             toinsert['name'] = mytree.name
             files2 = mytree.items()
-            toinsert['id'] = mytree.id
+            #toinsert['id'] = mytree.id
+            toinsert['id'] = sha
             folders_for_index.append(toinsert)
             #add this folder (not expanded) (FIXME)
         else: #just add it
@@ -257,7 +269,8 @@ def index(request,path="",sha="",repodir=""):
             	toinsert['id'] = head.id #thecommit.id
             	toinsert['date'] = thecommit.authored_date
             	toinsert['message'] = thecommit.message
-            	toinsert['filename'] = myblob.basename
+                toinsert['filename'] = myblob.basename
+                toinsert['filepath'] = path + myblob.basename
             	data_for_index.append(toinsert)
     return django.shortcuts.render_to_response("index.html", locals())
 
@@ -355,7 +368,6 @@ def new(request,path="",sha=""):
     if request.method == 'GET':
         #show the form
         message = "this is the GET message"
-        assert False, message
         pass
     elif request.method == 'POST':
         #add content to repo
@@ -398,6 +410,8 @@ def view(request,path="",sha="master"):
             else: check = True #ok, it is
             checkthing = path #in the case of a file, checkthing needs to be the path
         else:
+            if not hasattr(cur_tree.__dict__["_contents"], "has_key"):
+                raise Http404()
             check = cur_tree.__dict__["_contents"].has_key(pop_path_rev(copy.copy(path))) #
             checkthing = pop_path_rev(path) #in the case of a folder, checkthing needs to be the remaining path as we travel down the rabbit hole
         if check and not name == checkthing: #we don't have what we want, and it's a valid key, so let's setup the next step in the while loop
